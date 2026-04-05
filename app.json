@@ -1,0 +1,9 @@
+{
+  "expo": {
+    "name": "OneFleet",
+    "slug": "onefleet",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "assetBundlePatterns": ["**/*"]
+  }
+}

@@ -1,0 +1,25 @@
+export const requesterProfileStyles = {
+  shell: "min-h-screen bg-slate-100 font-['Poppins',sans-serif] text-slate-700",
+  header: 'relative h-[117px] overflow-visible bg-slate-800 text-white',
+  headerOverlay: 'absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.08),transparent_28%)]',
+  headerInner: 'relative mx-auto flex h-full w-full max-w-[1685px] items-center justify-between px-4 md:px-8',
+  brandGroup: 'flex items-center gap-3 md:gap-5',
+  heroLogo: 'h-[117px] w-[309px] object-contain',
+  portalTitle: 'text-sm font-bold tracking-[0.18em] md:text-xl',
+  headerActions: 'flex items-center gap-2',
+  headerButton:
+    'rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-semibold tracking-[0.12em] text-white transition hover:bg-white/20',
+  main: 'mx-auto flex max-w-6xl flex-col gap-6 px-4 py-6 md:px-8',
+  panel: 'rounded-2xl border border-slate-300 bg-white p-6 shadow-sm',
+  profileHeader:
+    'mb-6 flex flex-col gap-4 border-b border-slate-200 pb-6 md:flex-row md:items-center md:justify-between',
+  profileEyebrow: 'text-xs font-medium uppercase tracking-[0.24em] text-slate-500',
+  profileName: 'mt-2 text-3xl font-bold text-slate-800',
+  profileMeta: 'mt-1 text-sm text-slate-500',
+  initialsBadge: 'flex h-20 w-20 items-center justify-center rounded-full bg-slate-900 text-2xl font-bold text-white',
+  infoGrid: 'grid gap-4 md:grid-cols-2',
+  infoCard: 'rounded-xl border border-slate-300 bg-slate-50 p-4',
+  infoLabel: 'mb-2 text-xs uppercase tracking-[0.16em] text-slate-500',
+  infoValue: 'text-base font-semibold text-slate-900',
+  sectionTitle: 'mb-3 text-lg font-bold text-slate-800',
+} as const

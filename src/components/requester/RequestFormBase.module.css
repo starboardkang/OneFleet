@@ -1,0 +1,284 @@
+﻿.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(15, 23, 42, 0.4);
+}
+
+.requestForm {
+  position: relative;
+  width: min(860px, 100%);
+  max-height: min(800px, calc(100vh - 32px));
+  border-radius: 20px;
+  background-color: #fff;
+  color: #62748e;
+  font-family: Poppins, sans-serif;
+  overflow: visible;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 28px 8px;
+}
+
+.title {
+  margin: 0;
+  font-size: 24px;
+  color: #1e293b;
+  white-space: nowrap;
+}
+
+.closeButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: transparent;
+  color: #62748e;
+  padding: 0;
+  cursor: pointer;
+}
+
+.formBody {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0 28px 28px;
+  max-height: calc(min(800px, calc(100vh - 32px)) - 84px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #0f172a #dbe5f0;
+}
+
+.sectionHeading {
+  font-size: 24px;
+  color: #1e293b;
+}
+
+.fieldShell {
+  position: relative;
+}
+
+.selectChevron {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #62748e;
+}
+
+.chevronIcon {
+  width: 20px;
+  height: 20px;
+}
+
+.passengerLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 52px;
+  gap: 12px;
+  align-items: start;
+}
+
+.passengerStack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.passengerRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 56px;
+  gap: 12px;
+}
+
+.addPassengerButton {
+  width: 52px;
+  height: 52px;
+  border: none;
+  border-radius: 10px;
+  background: #0f172a;
+  color: #fff;
+  font-size: 32px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.addPassengerButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.removePassengerButton {
+  min-height: 52px;
+  border: none;
+  border-radius: 10px;
+  background: #fb1d21;
+  color: #fff;
+  font: inherit;
+  font-size: 30px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.removePassengerButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.input,
+.textarea,
+.select,
+.pickerTrigger {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid #939393;
+  background-color: #f1f5f9;
+  box-sizing: border-box;
+  color: #1e293b;
+  font: inherit;
+  outline: none;
+}
+
+.input,
+.select,
+.pickerTrigger {
+  min-height: 52px;
+  padding: 0 16px;
+}
+
+.pickerTrigger {
+  text-align: left;
+  cursor: pointer;
+}
+
+.textarea {
+  min-height: 112px;
+  padding: 14px 16px;
+  resize: vertical;
+  scrollbar-width: thin;
+  scrollbar-color: #0f172a #dbe5f0;
+}
+
+.select {
+  appearance: none;
+  cursor: pointer;
+  padding-right: 48px;
+}
+
+.twoColumnRow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.pickerField {
+  position: relative;
+}
+
+.invalidField {
+  border-color: #fb1d21;
+}
+
+.validationMessage {
+  font-size: 14px;
+  color: #fb1d21;
+  text-align: center;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding-top: 4px;
+}
+
+.primaryButton,
+.secondaryButton {
+  min-width: 220px;
+  min-height: 56px;
+  border-radius: 10px;
+  border: 1px solid #939393;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.primaryButton {
+  background-color: #0f172a;
+  color: #fff;
+}
+
+.secondaryButton {
+  background-color: #fff;
+  color: #fb1d21;
+}
+
+.formBody::-webkit-scrollbar,
+.textarea::-webkit-scrollbar {
+  width: 10px;
+}
+
+.formBody::-webkit-scrollbar-track,
+.textarea::-webkit-scrollbar-track {
+  background: linear-gradient(180deg, #e2e8f0 0%, #cbd5e1 100%);
+  border-radius: 999px;
+}
+
+.formBody::-webkit-scrollbar-thumb,
+.textarea::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  border: 2px solid #dbe5f0;
+  border-radius: 999px;
+}
+
+.formBody::-webkit-scrollbar-thumb:hover,
+.textarea::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #334155 0%, #1e293b 100%);
+}
+
+@media (max-width: 680px) {
+  .header {
+    padding: 20px 18px 8px;
+  }
+
+  .formBody {
+    padding: 0 18px 20px;
+  }
+
+  .sectionHeading {
+    font-size: 20px;
+  }
+
+  .passengerLayout,
+  .twoColumnRow {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .passengerRow {
+    grid-template-columns: minmax(0, 1fr) 48px;
+  }
+
+  .addPassengerButton {
+    width: 100%;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .primaryButton,
+  .secondaryButton {
+    width: 100%;
+    min-width: 0;
+  }
+}
