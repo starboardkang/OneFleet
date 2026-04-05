@@ -1,5 +1,5 @@
 import heroLogo from '../../../assets/hero-logo.png'
-import styles from './RequesterProfilePage.module.css'
+import styles from '../../styles/modules/requester/RequesterProfilePage.module.css'
 
 type RequesterProfilePageProps = {
   onBack: () => void

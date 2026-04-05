@@ -7,7 +7,7 @@ import RequestFormCreate from './RequestFormCreate'
 import RequestFormEdit from './RequestFormEdit'
 import DeleteRequestModal from './DeleteRequestModal'
 import RequestTripDetailsModal from './RequestTripDetailsModal'
-import styles from './RequesterPortal.module.css'
+import styles from '../../styles/modules/requester/RequesterPortal.module.css'
 import type { RequestFormValues } from './RequestFormBase'
 
 type RequestView = 'active' | 'past'
@@ -41,10 +41,10 @@ const initialRequests: RequestItem[] = [
     dateNeeded: '2026-04-06',
     timeNeeded: '1:00 PM',
     driver: 'Juan Luna',
-    vehicle: 'SAB - 2132 · Toyota Avanza',
+    vehicle: 'SAB - 2132 Â· Toyota Avanza',
     plateNumber: 'SAB - 2132',
     destination: 'Kapitolyo',
-    schedule: 'April 6, 2026 · 1:00 PM',
+    schedule: 'April 6, 2026 Â· 1:00 PM',
     remarks:
       'Driver and vehicle request has been approved. Please arrive at the designated pick up location on time.',
   },
@@ -65,7 +65,7 @@ const initialRequests: RequestItem[] = [
     vehicle: 'To be assigned',
     plateNumber: 'Pending assignment',
     destination: 'Pasig City Hall Annex',
-    schedule: 'April 8, 2026 · 9:00 AM',
+    schedule: 'April 8, 2026 Â· 9:00 AM',
     remarks: 'Your request is currently being reviewed by the dispatch office.',
   },
   {
@@ -81,11 +81,11 @@ const initialRequests: RequestItem[] = [
     city: 'Pasig City',
     dateNeeded: '2026-04-09',
     timeNeeded: '3:30 PM',
-    driver: '—',
-    vehicle: '—',
-    plateNumber: '—',
+    driver: 'â€”',
+    vehicle: 'â€”',
+    plateNumber: 'â€”',
     destination: 'Kapitolyo',
-    schedule: 'April 9, 2026 · 3:30 PM',
+    schedule: 'April 9, 2026 Â· 3:30 PM',
     remarks: 'The requested vehicle was unavailable for the selected schedule. Please resubmit with a new time slot.',
   },
   {
@@ -105,7 +105,7 @@ const initialRequests: RequestItem[] = [
     vehicle: 'SAA - 1098 - Toyota Innova',
     plateNumber: 'SAA - 1098',
     destination: 'Capitol Commons',
-    schedule: 'March 28, 2026 · 10:30 AM',
+    schedule: 'March 28, 2026 Â· 10:30 AM',
     remarks: 'Request completed successfully.',
   },
   {
@@ -125,7 +125,7 @@ const initialRequests: RequestItem[] = [
     vehicle: '--',
     plateNumber: '--',
     destination: 'Pasig Mega Market',
-    schedule: 'March 29, 2026 · 8:00 AM',
+    schedule: 'March 29, 2026 Â· 8:00 AM',
     remarks: 'The trip request was denied due to incomplete trip justification.',
   },
 ]
@@ -148,7 +148,7 @@ function formatSchedule(dateValue: string, timeValue: string) {
     day: 'numeric',
     year: 'numeric',
   })
-  return `${formattedDate} · ${timeValue}`
+  return `${formattedDate} Â· ${timeValue}`
 }
 
 function buildRequestFromForm(
@@ -180,9 +180,9 @@ function buildRequestFromForm(
     city: values.city,
     dateNeeded: values.dateNeeded,
     timeNeeded: values.timeNeeded,
-    driver: status === 'Approved' ? 'Juan Luna' : status === 'Processing' ? 'Pending assignment' : '—',
-    vehicle: status === 'Approved' ? 'SAB - 2132 · Toyota Avanza' : status === 'Processing' ? 'To be assigned' : '—',
-    plateNumber: status === 'Approved' ? 'SAB - 2132' : status === 'Processing' ? 'Pending assignment' : '—',
+    driver: status === 'Approved' ? 'Juan Luna' : status === 'Processing' ? 'Pending assignment' : 'â€”',
+    vehicle: status === 'Approved' ? 'SAB - 2132 Â· Toyota Avanza' : status === 'Processing' ? 'To be assigned' : 'â€”',
+    plateNumber: status === 'Approved' ? 'SAB - 2132' : status === 'Processing' ? 'Pending assignment' : 'â€”',
     destination: values.street,
     schedule: formatSchedule(values.dateNeeded, values.timeNeeded),
     remarks,

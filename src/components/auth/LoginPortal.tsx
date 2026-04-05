@@ -1,7 +1,7 @@
 import officeBackground from '../../../assets/ogs-office.png'
 import loginLogo from '../../../assets/pasig-login-logo.png'
 import { useLoginForm } from '../../hooks/useLoginForm'
-import styles from './LoginPortal.module.css'
+import styles from '../../styles/modules/auth/LoginPortal.module.css'
 import { PortalSwitch } from './PortalSwitch'
 
 type Portal = 'requester' | 'staff'

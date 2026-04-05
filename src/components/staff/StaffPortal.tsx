@@ -1,6 +1,6 @@
 import { type ReactNode, useMemo, useState } from 'react'
 import heroLogo from '../../../assets/hero-logo.png'
-import styles from './StaffPortal.module.css'
+import styles from '../../styles/modules/staff/StaffPortal.module.css'
 
 type StaffPortalProps = {
   onLogout: () => void

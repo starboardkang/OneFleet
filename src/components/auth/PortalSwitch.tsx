@@ -1,4 +1,4 @@
-import styles from './PortalSwitch.module.css'
+import styles from '../../styles/modules/auth/PortalSwitch.module.css'
 
 type Portal = 'requester' | 'staff'
 

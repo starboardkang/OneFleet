@@ -1,5 +1,5 @@
 import ModalCloseButton from '../common/ModalCloseButton'
-import styles from './RequesterPortal.module.css'
+import styles from '../../styles/modules/requester/RequesterPortal.module.css'
 import type { RequestItem } from './RequestCard'
 import useBodyScrollLock from '../../hooks/useBodyScrollLock'
 

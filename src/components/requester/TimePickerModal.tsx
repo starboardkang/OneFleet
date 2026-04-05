@@ -1,5 +1,5 @@
-﻿import { FunctionComponent, useState } from 'react'
-import styles from './TimePickerModal.module.css'
+import { FunctionComponent, useState } from 'react'
+import styles from '../../styles/modules/requester/TimePickerModal.module.css'
 import useBodyScrollLock from '../../hooks/useBodyScrollLock'
 
 type TimePickerModalProps = {

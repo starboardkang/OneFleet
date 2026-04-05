@@ -1,4 +1,4 @@
-import styles from './SegmentedControl.module.css'
+import styles from '../../styles/modules/common/SegmentedControl.module.css'
 
 type SegmentedOption<T extends string> = {
   label: string

@@ -1,4 +1,4 @@
-import styles from './RequesterPortal.module.css'
+import styles from '../../styles/modules/requester/RequesterPortal.module.css'
 
 export type RequestStatus = 'Approved' | 'Processing' | 'Denied'
 

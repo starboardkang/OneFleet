@@ -1,4 +1,4 @@
-import styles from './ModalCloseButton.module.css'
+import styles from '../../styles/modules/common/ModalCloseButton.module.css'
 
 type ModalCloseButtonProps = {
   onClick: () => void

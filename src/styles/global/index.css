@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --app-motion-duration: 300ms;
+    --app-motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-timing-function: var(--app-motion-ease);
+  }
+}
+
+@layer utilities {
+  .app-slider-thumb {
+    transition-property: transform, background-color, border-color, box-shadow, opacity;
+    transition-duration: var(--app-motion-duration) !important;
+    transition-timing-function: var(--app-motion-ease) !important;
+    will-change: transform;
+  }
+
+  .app-slider-option {
+    transition-property: color, background-color, border-color, transform, opacity;
+    transition-duration: var(--app-motion-duration) !important;
+    transition-timing-function: var(--app-motion-ease) !important;
+  }
+
+  .transition,
+  .transition-all,
+  .transition-colors,
+  .transition-opacity,
+  .transition-shadow,
+  .transition-transform {
+    transition-duration: var(--app-motion-duration) !important;
+    transition-timing-function: var(--app-motion-ease) !important;
+  }
+
+  .duration-75,
+  .duration-100,
+  .duration-150,
+  .duration-200,
+  .duration-300 {
+    transition-duration: var(--app-motion-duration) !important;
+  }
+
+  .animate-bounce,
+  .animate-ping,
+  .animate-pulse,
+  .animate-spin {
+    animation-duration: var(--app-motion-duration);
+  }
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+}

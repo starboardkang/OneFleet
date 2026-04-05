@@ -1,5 +1,5 @@
-﻿import { FunctionComponent } from 'react'
-import styles from './DatePickerModal.module.css'
+import { FunctionComponent } from 'react'
+import styles from '../../styles/modules/requester/DatePickerModal.module.css'
 import useBodyScrollLock from '../../hooks/useBodyScrollLock'
 
 const monthNames = [
