@@ -1,4 +1,4 @@
-﻿import { requesterPortalStyles } from '../../styles/pages/requesterPortalStyles'
+import styles from './RequesterPortal.module.css'
 
 export type RequestStatus = 'Approved' | 'Processing' | 'Denied'
 
@@ -37,15 +37,15 @@ type RequestCardProps = {
 function statusClasses(status: RequestStatus) {
   switch (status) {
     case 'Approved':
-      return 'bg-emerald-100 text-emerald-700'
+      return styles.statusApproved
     case 'Processing':
-      return 'bg-amber-100 text-amber-700'
+      return styles.statusProcessing
     case 'Denied':
-      return 'bg-rose-100 text-rose-700'
+      return styles.statusDenied
   }
 }
 
-const disabledButtonClass = 'cursor-not-allowed opacity-45 hover:bg-inherit'
+const disabledButtonClass = styles.buttonDisabled
 
 export default function RequestCard({
   request,
@@ -58,52 +58,52 @@ export default function RequestCard({
   onResubmit,
 }: RequestCardProps) {
   return (
-    <article className={requesterPortalStyles.requestCard}>
-      <div className={requesterPortalStyles.requestCardHeader}>
-        <div className={requesterPortalStyles.requestMetaRow}>
-          <h3 className={requesterPortalStyles.requestId}>{request.id}</h3>
-          <span className={requesterPortalStyles.requestType}>{request.tripType}</span>
-          <span className={requesterPortalStyles.requestDate}>{request.requestedAt}</span>
+    <article className={styles.requestCard}>
+      <div className={styles.requestCardHeader}>
+        <div className={styles.requestMetaRow}>
+          <h3 className={styles.requestId}>{request.id}</h3>
+          <span className={styles.requestType}>{request.tripType}</span>
+          <span className={styles.requestDate}>{request.requestedAt}</span>
         </div>
-        <span className={`${requesterPortalStyles.requestStatus} ${statusClasses(request.status)}`}>
+        <span className={[styles.requestStatus, statusClasses(request.status)].join(' ')}>
           {request.status.toUpperCase()}
         </span>
       </div>
 
-      <div className={requesterPortalStyles.requestDetailsGrid}>
-        <div className={requesterPortalStyles.requestDetailCard}>
-          <div className={requesterPortalStyles.requestDetailLabel}>Driver</div>
-          <div className={requesterPortalStyles.requestDetailValue}>{request.driver}</div>
+      <div className={styles.requestDetailsGrid}>
+        <div className={styles.requestDetailCard}>
+          <div className={styles.requestDetailLabel}>Driver</div>
+          <div className={styles.requestDetailValue}>{request.driver}</div>
         </div>
-        <div className={requesterPortalStyles.requestDetailCard}>
-          <div className={requesterPortalStyles.requestDetailLabel}>Vehicle</div>
-          <div className={requesterPortalStyles.requestDetailValue}>{request.vehicle}</div>
+        <div className={styles.requestDetailCard}>
+          <div className={styles.requestDetailLabel}>Vehicle</div>
+          <div className={styles.requestDetailValue}>{request.vehicle}</div>
         </div>
-        <div className={requesterPortalStyles.requestDetailCard}>
-          <div className={requesterPortalStyles.requestDetailLabel}>Destination</div>
-          <div className={requesterPortalStyles.requestDetailValue}>{request.destination}</div>
+        <div className={styles.requestDetailCard}>
+          <div className={styles.requestDetailLabel}>Destination</div>
+          <div className={styles.requestDetailValue}>{request.destination}</div>
         </div>
-        <div className={requesterPortalStyles.requestDetailCard}>
-          <div className={requesterPortalStyles.requestDetailLabel}>Date and Time Needed</div>
-          <div className={requesterPortalStyles.requestDetailValue}>{request.schedule}</div>
+        <div className={styles.requestDetailCard}>
+          <div className={styles.requestDetailLabel}>Date and Time Needed</div>
+          <div className={styles.requestDetailValue}>{request.schedule}</div>
         </div>
       </div>
 
-      <div className={requesterPortalStyles.requestFooter}>
-        <div className={requesterPortalStyles.remarks}>
-          <span className={requesterPortalStyles.remarksLabel}>Remarks: </span>
+      <div className={styles.requestFooter}>
+        <div className={styles.remarks}>
+          <span className={styles.remarksLabel}>Remarks: </span>
           {request.remarks}
         </div>
 
-        <div className={requesterPortalStyles.actionRow}>
+        <div className={styles.actionRow}>
           {canResubmit ? (
-            <button type="button" className={requesterPortalStyles.actionResubmit} onClick={onResubmit}>
+            <button type="button" className={styles.actionResubmit} onClick={onResubmit}>
               Re-submit
             </button>
           ) : null}
           <button
             type="button"
-            className={`${requesterPortalStyles.actionEdit} ${!canEdit ? disabledButtonClass : ''}`}
+            className={[styles.actionEdit, !canEdit ? disabledButtonClass : ''].join(' ')}
             onClick={onEdit}
             disabled={!canEdit}
           >
@@ -111,13 +111,13 @@ export default function RequestCard({
           </button>
           <button
             type="button"
-            className={`${requesterPortalStyles.actionCancel} ${!canDelete ? disabledButtonClass : ''}`}
+            className={[styles.actionCancel, !canDelete ? disabledButtonClass : ''].join(' ')}
             onClick={onDelete}
             disabled={!canDelete}
           >
             Delete
           </button>
-          <button type="button" className={requesterPortalStyles.actionDetails} onClick={onOpenDetails}>
+          <button type="button" className={styles.actionDetails} onClick={onOpenDetails}>
             More Details
           </button>
         </div>

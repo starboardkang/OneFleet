@@ -1,5 +1,5 @@
-﻿import ModalCloseButton from '../common/ModalCloseButton'
-import { requesterPortalStyles } from '../../styles/pages/requesterPortalStyles'
+import ModalCloseButton from '../common/ModalCloseButton'
+import styles from './RequesterPortal.module.css'
 import type { RequestItem } from './RequestCard'
 import useBodyScrollLock from '../../hooks/useBodyScrollLock'
 
@@ -20,12 +20,8 @@ function DetailField({
 }) {
   return (
     <div>
-      <div className={requesterPortalStyles.tripFieldLabel}>{label}</div>
-      <div
-        className={`${requesterPortalStyles.tripFieldBox} ${
-          tall ? requesterPortalStyles.tripFieldBoxTall : ''
-        }`}
-      >
+      <div className={styles.tripFieldLabel}>{label}</div>
+      <div className={[styles.tripFieldBox, tall ? styles.tripFieldBoxTall : ''].join(' ')}>
         {value}
       </div>
     </div>
@@ -40,43 +36,43 @@ export default function RequestTripDetailsModal({
   useBodyScrollLock()
 
   return (
-    <div className={requesterPortalStyles.modalOverlay} onClick={onClose}>
-      <div className={requesterPortalStyles.tripModal} onClick={(event) => event.stopPropagation()}>
-        <div className={requesterPortalStyles.tripModalHeader}>
-          <b className={requesterPortalStyles.tripModalTitle}>TRIP DETAILS</b>
+    <div className={styles.modalOverlay} onClick={onClose}>
+      <div className={styles.tripModal} onClick={(event) => event.stopPropagation()}>
+        <div className={styles.tripModalHeader}>
+          <b className={styles.tripModalTitle}>TRIP DETAILS</b>
           <ModalCloseButton
             onClick={onClose}
             ariaLabel="Close trip details"
-            className={requesterPortalStyles.modalCloseButton}
+            className={styles.modalCloseButton}
           />
         </div>
 
-        <div className={requesterPortalStyles.tripModalBody}>
-          <div className={requesterPortalStyles.tripGrid}>
+        <div className={styles.tripModalBody}>
+          <div className={styles.tripGrid}>
             <div>
-              <div className={requesterPortalStyles.tripSectionTitle}>Request Information &amp; Purpose</div>
-              <div className={requesterPortalStyles.tripSectionStack}>
+              <div className={styles.tripSectionTitle}>Request Information &amp; Purpose</div>
+              <div className={styles.tripSectionStack}>
                 <DetailField label="Request Type" value={request.tripType} />
                 <DetailField label="Purpose of request" value={request.purpose} tall />
               </div>
             </div>
 
             <div>
-              <div className={requesterPortalStyles.tripSectionTitle}>&nbsp;</div>
-              <div className={requesterPortalStyles.tripSectionStack}>
+              <div className={styles.tripSectionTitle}>&nbsp;</div>
+              <div className={styles.tripSectionStack}>
                 <DetailField label="Passenger Name" value={request.passengerNames.join(', ')} tall />
               </div>
             </div>
 
             <div>
-              <div className={requesterPortalStyles.tripSectionTitle}>Destination</div>
-              <div className={requesterPortalStyles.tripSectionStack}>
+              <div className={styles.tripSectionTitle}>Destination</div>
+              <div className={styles.tripSectionStack}>
                 <DetailField label="Street and Barangay" value={request.street} />
-                <div className={requesterPortalStyles.tripTwoColumn}>
+                <div className={styles.tripTwoColumn}>
                   <DetailField label="City" value={request.city} />
                   <DetailField label="Province" value={request.province} />
                 </div>
-                <div className={requesterPortalStyles.tripTwoColumn}>
+                <div className={styles.tripTwoColumn}>
                   <DetailField label="Date needed" value={request.dateNeeded} />
                   <DetailField label="Time needed" value={request.timeNeeded} />
                 </div>
@@ -84,8 +80,8 @@ export default function RequestTripDetailsModal({
             </div>
 
             <div>
-              <div className={requesterPortalStyles.tripSectionTitle}>Assigned Vehicle and Driver</div>
-              <div className={requesterPortalStyles.tripSectionStack}>
+              <div className={styles.tripSectionTitle}>Assigned Vehicle and Driver</div>
+              <div className={styles.tripSectionStack}>
                 <DetailField label="Driver" value={request.driver} />
                 <DetailField label="Vehicle" value={request.vehicle} />
                 <DetailField label="Plate Number" value={request.plateNumber} />
@@ -93,12 +89,12 @@ export default function RequestTripDetailsModal({
             </div>
           </div>
 
-          <div className={requesterPortalStyles.tripRemarksRow}>
-            <div className={requesterPortalStyles.tripRemarks}>
-              <span className={requesterPortalStyles.remarksLabel}>Remarks: </span>
+          <div className={styles.tripRemarksRow}>
+            <div className={styles.tripRemarks}>
+              <span className={styles.remarksLabel}>Remarks: </span>
               {request.remarks}
             </div>
-            <button type="button" className={requesterPortalStyles.tripEditButton} onClick={onEdit}>
+            <button type="button" className={styles.tripEditButton} onClick={onEdit}>
               Edit
             </button>
           </div>

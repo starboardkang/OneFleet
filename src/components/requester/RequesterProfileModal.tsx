@@ -1,6 +1,6 @@
-﻿import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import ModalCloseButton from '../common/ModalCloseButton'
-import { requesterPortalStyles } from '../../styles/pages/requesterPortalStyles'
+import styles from './RequesterPortal.module.css'
 import useBodyScrollLock from '../../hooks/useBodyScrollLock'
 
 export type RequesterProfile = {
@@ -73,31 +73,31 @@ export default function RequesterProfileModal({
   }
 
   return (
-    <div className={requesterPortalStyles.modalOverlay} onClick={onClose}>
-      <div className={requesterPortalStyles.profileModal} onClick={(event) => event.stopPropagation()}>
-        <div className={requesterPortalStyles.profileModalHeader}>
+    <div className={styles.modalOverlay} onClick={onClose}>
+      <div className={styles.profileModal} onClick={(event) => event.stopPropagation()}>
+        <div className={styles.profileModalHeader}>
           <div>
-            <div className={requesterPortalStyles.profileModalEyebrow}>Requester Profile</div>
-            <h2 className={requesterPortalStyles.profileModalTitle}>Edit Profile</h2>
+            <div className={styles.profileModalEyebrow}>Requester Profile</div>
+            <h2 className={styles.profileModalTitle}>Edit Profile</h2>
           </div>
           <ModalCloseButton
             onClick={onClose}
             ariaLabel="Close profile modal"
-            className={requesterPortalStyles.modalCloseButton}
+            className={styles.modalCloseButton}
           />
         </div>
 
-        <div className={requesterPortalStyles.profileModalBody}>
-          <div className={requesterPortalStyles.profilePhotoColumn}>
-            <div className={requesterPortalStyles.profileAvatarLarge}>
+        <div className={styles.profileModalBody}>
+          <div className={styles.profilePhotoColumn}>
+            <div className={styles.profileAvatarLarge}>
               {draftAvatarUrl ? (
                 <img
                   src={draftAvatarUrl}
                   alt="Requester profile"
-                  className={requesterPortalStyles.profileAvatarImage}
+                  className={styles.profileAvatarImage}
                 />
               ) : (
-                <span className={requesterPortalStyles.profileAvatarFallback}>
+                <span className={styles.profileAvatarFallback}>
                   {draftProfile.fullName
                     .split(' ')
                     .filter(Boolean)
@@ -113,52 +113,52 @@ export default function RequesterProfileModal({
               ref={fileInputRef}
               type="file"
               accept="image/*"
-              className="hidden"
+              className={styles.hiddenInput}
               onChange={handlePhotoChange}
             />
 
             <button
               type="button"
-              className={requesterPortalStyles.profilePhotoButton}
+              className={styles.profilePhotoButton}
               onClick={() => fileInputRef.current?.click()}
             >
               Change Photo
             </button>
           </div>
 
-          <div className={requesterPortalStyles.profileFormGrid}>
+          <div className={styles.profileFormGrid}>
             <input
-              className={requesterPortalStyles.profileInput}
+              className={styles.profileInput}
               value={draftProfile.fullName}
               onChange={(event) => handleFieldChange('fullName', event.target.value)}
               placeholder="Full Name"
             />
             <input
-              className={requesterPortalStyles.profileInput}
+              className={styles.profileInput}
               value={draftProfile.office}
               onChange={(event) => handleFieldChange('office', event.target.value)}
               placeholder="Office"
             />
             <input
-              className={requesterPortalStyles.profileInput}
+              className={styles.profileInput}
               value={draftProfile.email}
               onChange={(event) => handleFieldChange('email', event.target.value)}
               placeholder="Email"
             />
             <input
-              className={requesterPortalStyles.profileInput}
+              className={styles.profileInput}
               value={draftProfile.contactNumber}
               onChange={(event) => handleFieldChange('contactNumber', event.target.value)}
               placeholder="Contact Number"
             />
             <input
-              className={requesterPortalStyles.profileInput}
+              className={styles.profileInput}
               value={draftProfile.employeeId}
               onChange={(event) => handleFieldChange('employeeId', event.target.value)}
               placeholder="Employee ID"
             />
             <textarea
-              className={requesterPortalStyles.profileTextarea}
+              className={styles.profileTextarea}
               value={draftProfile.address}
               onChange={(event) => handleFieldChange('address', event.target.value)}
               placeholder="Office Address"
@@ -167,22 +167,14 @@ export default function RequesterProfileModal({
         </div>
 
         {validationMessage ? (
-          <div className={requesterPortalStyles.profileValidationMessage}>{validationMessage}</div>
+          <div className={styles.profileValidationMessage}>{validationMessage}</div>
         ) : null}
 
-        <div className={requesterPortalStyles.profileModalActions}>
-          <button
-            type="button"
-            className={requesterPortalStyles.profileSecondaryButton}
-            onClick={onClose}
-          >
+        <div className={styles.profileModalActions}>
+          <button type="button" className={styles.profileSecondaryButton} onClick={onClose}>
             Cancel
           </button>
-          <button
-            type="button"
-            className={requesterPortalStyles.profilePrimaryButton}
-            onClick={handleSave}
-          >
+          <button type="button" className={styles.profilePrimaryButton} onClick={handleSave}>
             Save Changes
           </button>
         </div>

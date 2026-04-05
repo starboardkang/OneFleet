@@ -1,7 +1,6 @@
 import { type ReactNode, useMemo, useState } from 'react'
 import heroLogo from '../../../assets/hero-logo.png'
-import { requesterPortalStyles } from '../../styles/pages/requesterPortalStyles'
-import { staffPortalStyles } from '../../styles/pages/staffPortalStyles'
+import styles from './StaffPortal.module.css'
 
 type StaffPortalProps = {
   onLogout: () => void
@@ -139,34 +138,34 @@ export default function StaffPortal({ onLogout }: StaffPortalProps) {
   )
 
   return (
-    <div className={staffPortalStyles.shell}>
-      <header className={requesterPortalStyles.header}>
-        <div className={requesterPortalStyles.headerOverlay} />
-        <div className={requesterPortalStyles.headerInner}>
-          <div className={requesterPortalStyles.brandGroup}>
-            <img src={heroLogo} alt="Hero logo" className={requesterPortalStyles.heroLogo} />
+    <div className={styles.shell}>
+      <header className={styles.header}>
+        <div className={styles.headerOverlay} />
+        <div className={styles.headerInner}>
+          <div className={styles.brandGroup}>
+            <img src={heroLogo} alt="Hero logo" className={styles.heroLogo} />
             <div>
-              <h1 className={requesterPortalStyles.portalTitle}>FLEET MANAGEMENT SYSTEM</h1>
+              <h1 className={styles.portalTitle}>FLEET MANAGEMENT SYSTEM</h1>
             </div>
           </div>
 
-          <div className="relative">
+          <div className={styles.menuRoot}>
             <button
               type="button"
               onClick={() => setIsMenuOpen((current) => !current)}
-              className={requesterPortalStyles.userMenuButton}
+              className={styles.userMenuButton}
             >
-              <div className={requesterPortalStyles.userAvatar}>
-                <span className={requesterPortalStyles.userAvatarInitials}>JD</span>
+              <div className={styles.userAvatar}>
+                <span className={styles.userAvatarInitials}>JD</span>
               </div>
               <div>
-                <div className={requesterPortalStyles.userName}>Juan Dela Cruz</div>
-                <div className={requesterPortalStyles.userOffice}>Officer Administrator</div>
+                <div className={styles.userName}>Juan Dela Cruz</div>
+                <div className={styles.userOffice}>Officer Administrator</div>
               </div>
               <svg
                 viewBox="0 0 24 24"
                 aria-hidden="true"
-                className={`${requesterPortalStyles.caret} ${isMenuOpen ? 'rotate-180' : ''}`}
+                className={[styles.caret, isMenuOpen ? styles.caretOpen : ''].join(' ')}
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2.2"
@@ -178,8 +177,8 @@ export default function StaffPortal({ onLogout }: StaffPortalProps) {
             </button>
 
             {isMenuOpen ? (
-              <div className={requesterPortalStyles.menuPanel}>
-                <button type="button" onClick={onLogout} className={requesterPortalStyles.menuItemDanger}>
+              <div className={styles.menuPanel}>
+                <button type="button" onClick={onLogout} className={styles.menuItemDanger}>
                   Logout
                 </button>
               </div>
@@ -188,15 +187,11 @@ export default function StaffPortal({ onLogout }: StaffPortalProps) {
         </div>
       </header>
 
-      <div className={staffPortalStyles.layout}>
-        <aside
-          className={`${staffPortalStyles.sidebar} ${
-            isSidebarCollapsed ? staffPortalStyles.sidebarCollapsed : ''
-          }`}
-        >
+      <div className={styles.layout}>
+        <aside className={[styles.sidebar, isSidebarCollapsed ? styles.sidebarCollapsed : ''].join(' ')}>
           <button
             type="button"
-            className={staffPortalStyles.sidebarToggle}
+            className={styles.sidebarToggle}
             onClick={() => setIsSidebarCollapsed((current) => !current)}
             aria-label={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
@@ -207,26 +202,22 @@ export default function StaffPortal({ onLogout }: StaffPortalProps) {
               strokeWidth="1.8"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className={`${staffPortalStyles.sidebarToggleIcon} ${
-                isSidebarCollapsed ? staffPortalStyles.sidebarToggleIconCollapsed : ''
-              }`}
+              className={[styles.sidebarToggleIcon, isSidebarCollapsed ? styles.sidebarToggleIconCollapsed : ''].join(' ')}
             >
               <path d="M15 18l-6-6 6-6" />
             </svg>
           </button>
 
-          <div className={staffPortalStyles.sidebarSections}>
+          <div className={styles.sidebarSections}>
             {staffSections.map((section) => (
-              <div key={section.title} className={staffPortalStyles.sidebarSection}>
+              <div key={section.title} className={styles.sidebarSection}>
                 <div
-                  className={`${staffPortalStyles.sidebarSectionTitle} ${
-                    isSidebarCollapsed ? staffPortalStyles.sidebarSectionTitleHidden : ''
-                  }`}
+                  className={[styles.sidebarSectionTitle, isSidebarCollapsed ? styles.sidebarSectionTitleHidden : ''].join(' ')}
                 >
                   {section.title}
                 </div>
 
-                <div className={staffPortalStyles.sidebarItems}>
+                <div className={styles.sidebarItems}>
                   {section.items.map((item) => {
                     const isActive = activeItem === item.label
 
@@ -234,24 +225,23 @@ export default function StaffPortal({ onLogout }: StaffPortalProps) {
                       <button
                         key={item.label}
                         type="button"
-                        className={`${staffPortalStyles.sidebarItem} ${
-                          isActive ? staffPortalStyles.sidebarItemActive : ''
-                        } ${isSidebarCollapsed ? 'justify-center px-0 py-2.5' : ''}`}
+                        className={[
+                          styles.sidebarItem,
+                          isActive ? styles.sidebarItemActive : '',
+                          isSidebarCollapsed ? styles.sidebarItemCollapsed : '',
+                        ].join(' ')}
                         onClick={() => setActiveItem(item.label)}
                       >
                         <span
-                          className={`${staffPortalStyles.sidebarItemIcon} ${
-                            isSidebarCollapsed && isActive
-                              ? 'h-8 w-8 rounded-[10px] bg-white text-slate-900 [&>svg]:h-4 [&>svg]:w-4'
-                              : ''
-                          }`}
+                          className={[
+                            styles.sidebarItemIcon,
+                            isSidebarCollapsed && isActive ? styles.sidebarItemIconCollapsedActive : '',
+                          ].join(' ')}
                         >
                           {item.icon}
                         </span>
                         <span
-                          className={`${staffPortalStyles.sidebarItemLabel} ${
-                            isSidebarCollapsed ? staffPortalStyles.sidebarItemLabelHidden : ''
-                          }`}
+                          className={[styles.sidebarItemLabel, isSidebarCollapsed ? styles.sidebarItemLabelHidden : ''].join(' ')}
                         >
                           {item.label}
                         </span>
@@ -263,80 +253,60 @@ export default function StaffPortal({ onLogout }: StaffPortalProps) {
             ))}
           </div>
 
-          <div
-            className={`${staffPortalStyles.rolePreviewCard} ${
-              isSidebarCollapsed ? staffPortalStyles.rolePreviewCardCollapsed : ''
-            }`}
-          >
-            <div className={staffPortalStyles.rolePreviewTitle}>ROLE PREVIEW</div>
-            <div
-              className={`${staffPortalStyles.rolePreviewText} ${
-                isSidebarCollapsed ? staffPortalStyles.rolePreviewTextHidden : ''
-              }`}
-            >
+          <div className={[styles.rolePreviewCard, isSidebarCollapsed ? styles.rolePreviewCardCollapsed : ''].join(' ')}>
+            <div className={styles.rolePreviewTitle}>ROLE PREVIEW</div>
+            <div className={[styles.rolePreviewText, isSidebarCollapsed ? styles.rolePreviewTextHidden : ''].join(' ')}>
               Switch roles to preview visibility for each module in the system.
             </div>
             <button
               type="button"
-              className={`${staffPortalStyles.rolePreviewButton} ${
-                isSidebarCollapsed ? staffPortalStyles.rolePreviewButtonCollapsed : ''
-              }`}
+              className={[styles.rolePreviewButton, isSidebarCollapsed ? styles.rolePreviewButtonCollapsed : ''].join(' ')}
             >
               <span
-                className={`${staffPortalStyles.rolePreviewButtonText} ${
-                  isSidebarCollapsed ? staffPortalStyles.rolePreviewTextHidden : ''
-                }`}
+                className={[styles.rolePreviewButtonText, isSidebarCollapsed ? styles.rolePreviewTextHidden : ''].join(' ')}
               >
                 Officer Administrator
               </span>
             </button>
           </div>
 
-          <div
-            className={`${staffPortalStyles.sidebarFooter} ${
-              isSidebarCollapsed ? 'justify-center' : ''
-            }`}
-          >
-            <div className={staffPortalStyles.sidebarFooterAvatar} />
-            <div
-              className={`${staffPortalStyles.sidebarFooterText} ${
-                isSidebarCollapsed ? staffPortalStyles.sidebarFooterTextHidden : ''
-              }`}
-            >
-              <div className={staffPortalStyles.sidebarFooterName}>Juan Dela Cruz</div>
-              <div className={staffPortalStyles.sidebarFooterRole}>OFFICER ADMINISTRATOR</div>
+          <div className={[styles.sidebarFooter, isSidebarCollapsed ? styles.sidebarFooterCollapsed : ''].join(' ')}>
+            <div className={styles.sidebarFooterAvatar} />
+            <div className={[styles.sidebarFooterText, isSidebarCollapsed ? styles.sidebarFooterTextHidden : ''].join(' ')}>
+              <div className={styles.sidebarFooterName}>Juan Dela Cruz</div>
+              <div className={styles.sidebarFooterRole}>OFFICER ADMINISTRATOR</div>
             </div>
           </div>
         </aside>
 
-        <main className={staffPortalStyles.main}>
-          <div className={staffPortalStyles.pageTitleRow}>
+        <main className={styles.main}>
+          <div className={styles.pageTitleRow}>
             <div>
-              <div className={staffPortalStyles.pageDate}>{today}</div>
-              <h2 className={staffPortalStyles.pageTitle}>{activeItem}</h2>
+              <div className={styles.pageDate}>{today}</div>
+              <h2 className={styles.pageTitle}>{activeItem}</h2>
             </div>
           </div>
 
-          <section className={staffPortalStyles.contentCard}>
-            <div className={staffPortalStyles.contentTitle}>Dashboard</div>
-            <div className={staffPortalStyles.contentText}>
+          <section className={styles.contentCard}>
+            <div className={styles.contentTitle}>Dashboard</div>
+            <div className={styles.contentText}>
               This is the staff workspace. The left navigation is foldable and grouped by Overview,
               Transport, Vehicle, and System so the staff side can grow into multiple modules.
             </div>
           </section>
 
-          <section className={staffPortalStyles.metricsGrid}>
-            <div className={staffPortalStyles.metricCard}>
-              <div className={staffPortalStyles.metricLabel}>Pending Requests</div>
-              <div className={staffPortalStyles.metricValue}>08</div>
+          <section className={styles.metricsGrid}>
+            <div className={styles.metricCard}>
+              <div className={styles.metricLabel}>Pending Requests</div>
+              <div className={styles.metricValue}>08</div>
             </div>
-            <div className={staffPortalStyles.metricCard}>
-              <div className={staffPortalStyles.metricLabel}>Active Trips</div>
-              <div className={staffPortalStyles.metricValue}>14</div>
+            <div className={styles.metricCard}>
+              <div className={styles.metricLabel}>Active Trips</div>
+              <div className={styles.metricValue}>14</div>
             </div>
-            <div className={staffPortalStyles.metricCard}>
-              <div className={staffPortalStyles.metricLabel}>Fleet Registered</div>
-              <div className={staffPortalStyles.metricValue}>32</div>
+            <div className={styles.metricCard}>
+              <div className={styles.metricLabel}>Fleet Registered</div>
+              <div className={styles.metricValue}>32</div>
             </div>
           </section>
         </main>

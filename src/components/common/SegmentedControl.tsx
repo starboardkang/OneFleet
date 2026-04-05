@@ -1,3 +1,5 @@
+import styles from './SegmentedControl.module.css'
+
 type SegmentedOption<T extends string> = {
   label: string
   value: T
@@ -45,4 +47,3 @@ export default function SegmentedControl<T extends string>({
     </div>
   )
 }
-import styles from './SegmentedControl.module.css'

@@ -1,4 +1,4 @@
-﻿import { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import heroLogo from '../../../assets/hero-logo.png'
 import Group71 from './Group71'
 import RequestCard, { type RequestItem, type RequestStatus } from './RequestCard'
@@ -7,7 +7,7 @@ import RequestFormCreate from './RequestFormCreate'
 import RequestFormEdit from './RequestFormEdit'
 import DeleteRequestModal from './DeleteRequestModal'
 import RequestTripDetailsModal from './RequestTripDetailsModal'
-import { requesterPortalStyles } from '../../styles/pages/requesterPortalStyles'
+import styles from './RequesterPortal.module.css'
 import type { RequestFormValues } from './RequestFormBase'
 
 type RequestView = 'active' | 'past'
@@ -20,10 +20,10 @@ type RequesterPortalProps = {
 }
 
 const overview = [
-  { label: 'Total', tone: 'bg-slate-100 text-slate-800' },
-  { label: 'Approved', tone: 'bg-emerald-100 text-emerald-700' },
-  { label: 'Processing', tone: 'bg-amber-100 text-amber-700' },
-  { label: 'Denied', tone: 'bg-rose-100 text-rose-700' },
+  { label: 'Total', tone: styles.statNeutral },
+  { label: 'Approved', tone: styles.statApproved },
+  { label: 'Processing', tone: styles.statProcessing },
+  { label: 'Denied', tone: styles.statDenied },
 ] as const
 
 const initialRequests: RequestItem[] = [
@@ -269,44 +269,38 @@ export function RequesterPortal({
       .toUpperCase() || 'VS'
 
   return (
-    <div className={requesterPortalStyles.shell}>
-      <header className={requesterPortalStyles.header}>
-        <div className={requesterPortalStyles.headerOverlay} />
-        <div className={requesterPortalStyles.headerInner}>
-          <div className={requesterPortalStyles.brandGroup}>
-            <img src={heroLogo} alt="Hero logo" className={requesterPortalStyles.heroLogo} />
+    <div className={styles.shell}>
+      <header className={styles.header}>
+        <div className={styles.headerOverlay} />
+        <div className={styles.headerInner}>
+          <div className={styles.brandGroup}>
+            <img src={heroLogo} alt="Hero logo" className={styles.heroLogo} />
             <div>
-              <h1 className={requesterPortalStyles.portalTitle}>
-                DRIVER AND VEHICLE REQUISITION PORTAL
-              </h1>
+              <h1 className={styles.portalTitle}>DRIVER AND VEHICLE REQUISITION PORTAL</h1>
             </div>
           </div>
 
-          <div className="relative">
+          <div className={styles.menuRoot}>
             <button
               type="button"
               onClick={() => setIsMenuOpen((current) => !current)}
-              className={requesterPortalStyles.userMenuButton}
+              className={styles.userMenuButton}
             >
-              <div className={requesterPortalStyles.userAvatar}>
+              <div className={styles.userAvatar}>
                 {avatarUrl ? (
-                  <img
-                    src={avatarUrl}
-                    alt={profile.fullName}
-                    className={requesterPortalStyles.userAvatarImage}
-                  />
+                  <img src={avatarUrl} alt={profile.fullName} className={styles.userAvatarImage} />
                 ) : (
-                  <span className={requesterPortalStyles.userAvatarInitials}>{userInitials}</span>
+                  <span className={styles.userAvatarInitials}>{userInitials}</span>
                 )}
               </div>
               <div>
-                <div className={requesterPortalStyles.userName}>{profile.fullName}</div>
-                <div className={requesterPortalStyles.userOffice}>{profile.office}</div>
+                <div className={styles.userName}>{profile.fullName}</div>
+                <div className={styles.userOffice}>{profile.office}</div>
               </div>
               <svg
                 viewBox="0 0 24 24"
                 aria-hidden="true"
-                className={`${requesterPortalStyles.caret} ${isMenuOpen ? 'rotate-180' : ''}`}
+                className={[styles.caret, isMenuOpen ? styles.caretOpen : ''].join(' ')}
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2.2"
@@ -318,18 +312,18 @@ export function RequesterPortal({
             </button>
 
             {isMenuOpen ? (
-              <div className={requesterPortalStyles.menuPanel}>
+              <div className={styles.menuPanel}>
                 <button
                   type="button"
                   onClick={() => {
                     setIsMenuOpen(false)
                     setIsProfileModalOpen(true)
                   }}
-                  className={requesterPortalStyles.menuItem}
+                  className={styles.menuItem}
                 >
                   Profile
                 </button>
-                <button type="button" onClick={onLogout} className={requesterPortalStyles.menuItemDanger}>
+                <button type="button" onClick={onLogout} className={styles.menuItemDanger}>
                   Logout
                 </button>
               </div>
@@ -338,19 +332,19 @@ export function RequesterPortal({
         </div>
       </header>
 
-      <main className={requesterPortalStyles.main}>
-        <section className={requesterPortalStyles.panel}>
-          <div className={requesterPortalStyles.overviewHeader}>
+      <main className={styles.main}>
+        <section className={styles.panel}>
+          <div className={styles.overviewHeader}>
             <div>
-              <div className={requesterPortalStyles.overviewDate}>{headerDate}</div>
-              <h2 className={requesterPortalStyles.overviewTitle}>Requests Overview</h2>
+              <div className={styles.overviewDate}>{headerDate}</div>
+              <h2 className={styles.overviewTitle}>Requests Overview</h2>
             </div>
 
-            <div className={requesterPortalStyles.overviewActions}>
-              <div className={requesterPortalStyles.searchBox}>Search request no., driver, destination</div>
+            <div className={styles.overviewActions}>
+              <div className={styles.searchBox}>Search request no., driver, destination</div>
               <button
                 type="button"
-                className={requesterPortalStyles.createButton}
+                className={styles.createButton}
                 onClick={() => setIsCreateOpen(true)}
               >
                 + Create Request
@@ -358,48 +352,48 @@ export function RequesterPortal({
             </div>
           </div>
 
-          <div className={requesterPortalStyles.overviewSummaryRow}>
-            <div className={requesterPortalStyles.requestTabs}>
+          <div className={styles.overviewSummaryRow}>
+            <div className={styles.requestTabs}>
               <Group71 activeView={requestView} onChange={setRequestView} />
             </div>
 
-            <div className={requesterPortalStyles.statsGrid}>
+            <div className={styles.statsGrid}>
               {overview.map((item) => (
-                <div key={item.label} className={`${requesterPortalStyles.statCard} ${item.tone}`}>
-                  <div className={requesterPortalStyles.statLabel}>{item.label}</div>
-                  <div className={requesterPortalStyles.statValue}>{summaryCounts[item.label]}</div>
+                <div key={item.label} className={[styles.statCard, item.tone].join(' ')}>
+                  <div className={styles.statLabel}>{item.label}</div>
+                  <div className={styles.statValue}>{summaryCounts[item.label]}</div>
                 </div>
               ))}
             </div>
           </div>
 
           {requestView === 'active' ? (
-            <div className={requesterPortalStyles.pastNoticeCard}>
-              <div className={requesterPortalStyles.pastNoticeTitle}>Request Rules</div>
-              <div className={requesterPortalStyles.pastNoticeText}>
+            <div className={styles.pastNoticeCard}>
+              <div className={styles.pastNoticeTitle}>Request Rules</div>
+              <div className={styles.pastNoticeText}>
                 Request for vehicle use shall be made at least <b>two (2) to three (3) days</b> from the intended date of use.
               </div>
-              <div className={requesterPortalStyles.pastNoticeText}>
+              <div className={styles.pastNoticeText}>
                 Failure to use the vehicle at the given date and time forfeits one's right to use the vehicle assigned.
               </div>
             </div>
           ) : null}
 
           {requestView === 'past' ? (
-            <div className={requesterPortalStyles.pastNoticeCard}>
-              <div className={requesterPortalStyles.pastNoticeTitle}>Past Request Rules</div>
-              <div className={requesterPortalStyles.pastNoticeText}>
+            <div className={styles.pastNoticeCard}>
+              <div className={styles.pastNoticeTitle}>Past Request Rules</div>
+              <div className={styles.pastNoticeText}>
                 Approved and denied requests that are 10 days old or older are automatically placed in the Past Requests section.
               </div>
-              <div className={requesterPortalStyles.pastNoticeText}>
+              <div className={styles.pastNoticeText}>
                 Approved past requests have edit and delete disabled, while denied past requests keep re-submit available but keep delete disabled.
               </div>
             </div>
           ) : null}
         </section>
 
-        <section className={requesterPortalStyles.panel}>
-          <div className={requesterPortalStyles.requestList}>
+        <section className={styles.panel}>
+          <div className={styles.requestList}>
             {visibleRequests.map((request) => {
               const permissions = getRequestPermissions(request, requestView === 'past')
 

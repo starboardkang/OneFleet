@@ -1,5 +1,5 @@
 import heroLogo from '../../../assets/hero-logo.png'
-import { requesterProfileStyles } from '../../styles/pages/requesterProfileStyles'
+import styles from './RequesterProfilePage.module.css'
 
 type RequesterProfilePageProps = {
   onBack: () => void
@@ -18,88 +18,76 @@ const profile = {
 
 export function RequesterProfilePage({ onBack, onLogout }: RequesterProfilePageProps) {
   return (
-    <div className={requesterProfileStyles.shell}>
-      <header className={requesterProfileStyles.header}>
-        <div className={requesterProfileStyles.headerOverlay} />
-        <div className={requesterProfileStyles.headerInner}>
-          <div className={requesterProfileStyles.brandGroup}>
-            <img src={heroLogo} alt="Hero logo" className={requesterProfileStyles.heroLogo} />
+    <div className={styles.shell}>
+      <header className={styles.header}>
+        <div className={styles.headerOverlay} />
+        <div className={styles.headerInner}>
+          <div className={styles.brandGroup}>
+            <img src={heroLogo} alt="Hero logo" className={styles.heroLogo} />
             <div>
-              <h1 className={requesterProfileStyles.portalTitle}>
+              <h1 className={styles.portalTitle}>
                 DRIVER AND VEHICLE REQUISITION PORTAL
               </h1>
             </div>
           </div>
 
-          <div className={requesterProfileStyles.headerActions}>
-            <button
-              type="button"
-              onClick={onBack}
-              className={requesterProfileStyles.headerButton}
-            >
+          <div className={styles.headerActions}>
+            <button type="button" onClick={onBack} className={styles.headerButton}>
               DASHBOARD
             </button>
-            <button
-              type="button"
-              onClick={onLogout}
-              className={requesterProfileStyles.headerButton}
-            >
+            <button type="button" onClick={onLogout} className={styles.headerButton}>
               LOGOUT
             </button>
           </div>
         </div>
       </header>
 
-      <main className={requesterProfileStyles.main}>
-        <section className={requesterProfileStyles.panel}>
-          <div className={requesterProfileStyles.profileHeader}>
+      <main className={styles.main}>
+        <section className={styles.panel}>
+          <div className={styles.profileHeader}>
             <div>
-              <div className={requesterProfileStyles.profileEyebrow}>
-                Requester Profile
-              </div>
-              <h2 className={requesterProfileStyles.profileName}>{profile.fullName}</h2>
-              <div className={requesterProfileStyles.profileMeta}>
+              <div className={styles.profileEyebrow}>Requester Profile</div>
+              <h2 className={styles.profileName}>{profile.fullName}</h2>
+              <div className={styles.profileMeta}>
                 {profile.role} - {profile.office}
               </div>
             </div>
-            <div className={requesterProfileStyles.initialsBadge}>
-              VS
-            </div>
+            <div className={styles.initialsBadge}>VS</div>
           </div>
 
-          <div className={requesterProfileStyles.infoGrid}>
-            <div className={requesterProfileStyles.infoCard}>
-              <div className={requesterProfileStyles.infoLabel}>Full Name</div>
-              <div className={requesterProfileStyles.infoValue}>{profile.fullName}</div>
+          <div className={styles.infoGrid}>
+            <div className={styles.infoCard}>
+              <div className={styles.infoLabel}>Full Name</div>
+              <div className={styles.infoValue}>{profile.fullName}</div>
             </div>
-            <div className={requesterProfileStyles.infoCard}>
-              <div className={requesterProfileStyles.infoLabel}>Role</div>
-              <div className={requesterProfileStyles.infoValue}>{profile.role}</div>
+            <div className={styles.infoCard}>
+              <div className={styles.infoLabel}>Role</div>
+              <div className={styles.infoValue}>{profile.role}</div>
             </div>
-            <div className={requesterProfileStyles.infoCard}>
-              <div className={requesterProfileStyles.infoLabel}>Office</div>
-              <div className={requesterProfileStyles.infoValue}>{profile.office}</div>
+            <div className={styles.infoCard}>
+              <div className={styles.infoLabel}>Office</div>
+              <div className={styles.infoValue}>{profile.office}</div>
             </div>
-            <div className={requesterProfileStyles.infoCard}>
-              <div className={requesterProfileStyles.infoLabel}>Employee ID</div>
-              <div className={requesterProfileStyles.infoValue}>{profile.employeeId}</div>
+            <div className={styles.infoCard}>
+              <div className={styles.infoLabel}>Employee ID</div>
+              <div className={styles.infoValue}>{profile.employeeId}</div>
             </div>
-            <div className={requesterProfileStyles.infoCard}>
-              <div className={requesterProfileStyles.infoLabel}>Email</div>
-              <div className={requesterProfileStyles.infoValue}>{profile.email}</div>
+            <div className={styles.infoCard}>
+              <div className={styles.infoLabel}>Email</div>
+              <div className={styles.infoValue}>{profile.email}</div>
             </div>
-            <div className={requesterProfileStyles.infoCard}>
-              <div className={requesterProfileStyles.infoLabel}>Contact Number</div>
-              <div className={requesterProfileStyles.infoValue}>{profile.contactNumber}</div>
+            <div className={styles.infoCard}>
+              <div className={styles.infoLabel}>Contact Number</div>
+              <div className={styles.infoValue}>{profile.contactNumber}</div>
             </div>
           </div>
         </section>
 
-        <section className={requesterProfileStyles.panel}>
-          <div className={requesterProfileStyles.sectionTitle}>Office Details</div>
-          <div className={requesterProfileStyles.infoCard}>
-            <div className={requesterProfileStyles.infoLabel}>Office Address</div>
-            <div className={requesterProfileStyles.infoValue}>{profile.address}</div>
+        <section className={styles.panel}>
+          <div className={styles.sectionTitle}>Office Details</div>
+          <div className={styles.infoCard}>
+            <div className={styles.infoLabel}>Office Address</div>
+            <div className={styles.infoValue}>{profile.address}</div>
           </div>
         </section>
       </main>

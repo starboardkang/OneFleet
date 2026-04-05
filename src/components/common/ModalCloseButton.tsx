@@ -1,4 +1,6 @@
-﻿type ModalCloseButtonProps = {
+import styles from './ModalCloseButton.module.css'
+
+type ModalCloseButtonProps = {
   onClick: () => void
   ariaLabel?: string
   className: string
@@ -32,4 +34,3 @@ export default function ModalCloseButton({
     </button>
   )
 }
-import styles from './ModalCloseButton.module.css'

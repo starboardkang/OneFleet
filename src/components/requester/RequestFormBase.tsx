@@ -3,6 +3,7 @@ import DatePickerModal from './DatePickerModal'
 import styles from './RequestFormBase.module.css'
 import TimePickerModal from './TimePickerModal'
 import useBodyScrollLock from '../../hooks/useBodyScrollLock'
+import ModalCloseButton from '../common/ModalCloseButton'
 
 const requestTypeOptions = [
   'DRIVER ONLY',
@@ -187,9 +188,11 @@ const RequestFormBase: FunctionComponent<RequestFormBaseProps> = ({
       <div className={styles.requestForm} onClick={(event) => event.stopPropagation()}>
         <div className={styles.header}>
           <b className={styles.title}>{mode === 'create' ? 'CREATE REQUEST' : 'EDIT REQUEST'}</b>
-          <button type="button" className={styles.closeButton} onClick={onClose} aria-label="Close">
-            ×
-          </button>
+          <ModalCloseButton
+            onClick={onClose}
+            ariaLabel={`Close ${mode} request`}
+            className={styles.closeButton}
+          />
         </div>
 
         <div className={styles.formBody}>

@@ -35,16 +35,18 @@
 }
 
 .closeButton {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   width: 44px;
   height: 44px;
-  border: none;
-  background: transparent;
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+  background: #fff;
   color: #62748e;
   padding: 0;
-  cursor: pointer;
+  transition: background-color var(--app-motion-duration) var(--app-motion-ease);
+}
+
+.closeButton:hover {
+  background: #f1f5f9;
 }
 
 .formBody {

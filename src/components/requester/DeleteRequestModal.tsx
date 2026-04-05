@@ -1,5 +1,5 @@
 import ModalCloseButton from '../common/ModalCloseButton'
-import { requesterPortalStyles } from '../../styles/pages/requesterPortalStyles'
+import styles from './RequesterPortal.module.css'
 import useBodyScrollLock from '../../hooks/useBodyScrollLock'
 
 type DeleteRequestModalProps = {
@@ -16,37 +16,29 @@ export default function DeleteRequestModal({
   useBodyScrollLock()
 
   return (
-    <div className={requesterPortalStyles.modalOverlay} onClick={onClose}>
-      <div className={requesterPortalStyles.deleteModal} onClick={(event) => event.stopPropagation()}>
-        <div className={requesterPortalStyles.deleteModalHeader}>
+    <div className={styles.modalOverlay} onClick={onClose}>
+      <div className={styles.deleteModal} onClick={(event) => event.stopPropagation()}>
+        <div className={styles.deleteModalHeader}>
           <div>
-            <div className={requesterPortalStyles.deleteModalEyebrow}>Delete Request</div>
-            <h2 className={requesterPortalStyles.deleteModalTitle}>Delete {requestId}?</h2>
+            <div className={styles.deleteModalEyebrow}>Delete Request</div>
+            <h2 className={styles.deleteModalTitle}>Delete {requestId}?</h2>
           </div>
           <ModalCloseButton
             onClick={onClose}
             ariaLabel="Close delete confirmation"
-            className={requesterPortalStyles.modalCloseButton}
+            className={styles.modalCloseButton}
           />
         </div>
 
-        <p className={requesterPortalStyles.deleteModalText}>
+        <p className={styles.deleteModalText}>
           This action will remove the request from the list. Please confirm if you want to delete it.
         </p>
 
-        <div className={requesterPortalStyles.deleteModalActions}>
-          <button
-            type="button"
-            className={requesterPortalStyles.profileSecondaryButton}
-            onClick={onClose}
-          >
+        <div className={styles.deleteModalActions}>
+          <button type="button" className={styles.profileSecondaryButton} onClick={onClose}>
             Keep Request
           </button>
-          <button
-            type="button"
-            className={requesterPortalStyles.deleteConfirmButton}
-            onClick={onConfirm}
-          >
+          <button type="button" className={styles.deleteConfirmButton} onClick={onConfirm}>
             Delete
           </button>
         </div>
