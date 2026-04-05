@@ -36,11 +36,11 @@
   gap: 6px;
 }
 
-.hourInput,
-.minuteInput {
+.timeInput {
   width: 100%;
   height: 78px;
   border-radius: 8px;
+  border: 3px solid transparent;
   background: #e5e5e5;
   color: #000;
   font: inherit;
@@ -49,17 +49,12 @@
   outline: none;
 }
 
-.hourInput {
-  border: 3px solid #1e293b;
+.activeTimeInput {
+  border-color: #1e293b;
   background: #fff;
 }
 
-.minuteInput {
-  border: 3px solid transparent;
-}
-
-.hourInput:focus,
-.minuteInput:focus {
+.timeInput:focus {
   border-color: #1e293b;
   background: #fff;
 }
@@ -130,8 +125,7 @@
     gap: 6px;
   }
 
-  .hourInput,
-  .minuteInput {
+  .timeInput {
     height: 68px;
     font-size: 36px;
   }

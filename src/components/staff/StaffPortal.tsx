@@ -122,7 +122,7 @@ const staffSections: StaffSection[] = [
 ]
 
 export default function StaffPortal({ onLogout }: StaffPortalProps) {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
+  const [isSidebarHovered, setIsSidebarHovered] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [activeItem, setActiveItem] = useState('Dashboard')
 
@@ -188,31 +188,21 @@ export default function StaffPortal({ onLogout }: StaffPortalProps) {
       </header>
 
       <div className={styles.layout}>
-        <aside className={[styles.sidebar, isSidebarCollapsed ? styles.sidebarCollapsed : ''].join(' ')}>
-          <button
-            type="button"
-            className={styles.sidebarToggle}
-            onClick={() => setIsSidebarCollapsed((current) => !current)}
-            aria-label={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className={[styles.sidebarToggleIcon, isSidebarCollapsed ? styles.sidebarToggleIconCollapsed : ''].join(' ')}
-            >
-              <path d="M15 18l-6-6 6-6" />
-            </svg>
-          </button>
+        <aside
+          className={[styles.sidebar, isSidebarHovered ? styles.sidebarExpanded : styles.sidebarCollapsed].join(' ')}
+          onMouseEnter={() => setIsSidebarHovered(true)}
+          onMouseLeave={() => setIsSidebarHovered(false)}
+        >
+          <div className={styles.sidebarGlow} aria-hidden="true" />
 
           <div className={styles.sidebarSections}>
             {staffSections.map((section) => (
               <div key={section.title} className={styles.sidebarSection}>
                 <div
-                  className={[styles.sidebarSectionTitle, isSidebarCollapsed ? styles.sidebarSectionTitleHidden : ''].join(' ')}
+                  className={[
+                    styles.sidebarSectionTitle,
+                    isSidebarHovered ? styles.sidebarSectionTitleVisible : styles.sidebarSectionTitleHidden,
+                  ].join(' ')}
                 >
                   {section.title}
                 </div>
@@ -228,20 +218,23 @@ export default function StaffPortal({ onLogout }: StaffPortalProps) {
                         className={[
                           styles.sidebarItem,
                           isActive ? styles.sidebarItemActive : '',
-                          isSidebarCollapsed ? styles.sidebarItemCollapsed : '',
+                          isSidebarHovered ? styles.sidebarItemExpanded : styles.sidebarItemCollapsed,
                         ].join(' ')}
                         onClick={() => setActiveItem(item.label)}
                       >
                         <span
                           className={[
                             styles.sidebarItemIcon,
-                            isSidebarCollapsed && isActive ? styles.sidebarItemIconCollapsedActive : '',
+                            !isSidebarHovered && isActive ? styles.sidebarItemIconCollapsedActive : '',
                           ].join(' ')}
                         >
                           {item.icon}
                         </span>
                         <span
-                          className={[styles.sidebarItemLabel, isSidebarCollapsed ? styles.sidebarItemLabelHidden : ''].join(' ')}
+                          className={[
+                            styles.sidebarItemLabel,
+                            isSidebarHovered ? styles.sidebarItemLabelVisible : styles.sidebarItemLabelHidden,
+                          ].join(' ')}
                         >
                           {item.label}
                         </span>
@@ -253,26 +246,34 @@ export default function StaffPortal({ onLogout }: StaffPortalProps) {
             ))}
           </div>
 
-          <div className={[styles.rolePreviewCard, isSidebarCollapsed ? styles.rolePreviewCardCollapsed : ''].join(' ')}>
+          <div
+            className={[
+              styles.rolePreviewCard,
+              isSidebarHovered ? styles.rolePreviewVisible : styles.rolePreviewHidden,
+            ].join(' ')}
+          >
             <div className={styles.rolePreviewTitle}>ROLE PREVIEW</div>
-            <div className={[styles.rolePreviewText, isSidebarCollapsed ? styles.rolePreviewTextHidden : ''].join(' ')}>
+            <div className={styles.rolePreviewText}>
               Switch roles to preview visibility for each module in the system.
             </div>
-            <button
-              type="button"
-              className={[styles.rolePreviewButton, isSidebarCollapsed ? styles.rolePreviewButtonCollapsed : ''].join(' ')}
-            >
-              <span
-                className={[styles.rolePreviewButtonText, isSidebarCollapsed ? styles.rolePreviewTextHidden : ''].join(' ')}
-              >
-                Officer Administrator
-              </span>
+            <button type="button" className={styles.rolePreviewButton}>
+              <span className={styles.rolePreviewButtonText}>Officer Administrator</span>
             </button>
           </div>
 
-          <div className={[styles.sidebarFooter, isSidebarCollapsed ? styles.sidebarFooterCollapsed : ''].join(' ')}>
+          <div
+            className={[
+              styles.sidebarFooter,
+              isSidebarHovered ? styles.sidebarFooterExpanded : styles.sidebarFooterCollapsed,
+            ].join(' ')}
+          >
             <div className={styles.sidebarFooterAvatar} />
-            <div className={[styles.sidebarFooterText, isSidebarCollapsed ? styles.sidebarFooterTextHidden : ''].join(' ')}>
+            <div
+              className={[
+                styles.sidebarFooterText,
+                isSidebarHovered ? styles.sidebarFooterTextVisible : styles.sidebarFooterTextHidden,
+              ].join(' ')}
+            >
               <div className={styles.sidebarFooterName}>Juan Dela Cruz</div>
               <div className={styles.sidebarFooterRole}>OFFICER ADMINISTRATOR</div>
             </div>
@@ -290,8 +291,8 @@ export default function StaffPortal({ onLogout }: StaffPortalProps) {
           <section className={styles.contentCard}>
             <div className={styles.contentTitle}>Dashboard</div>
             <div className={styles.contentText}>
-              This is the staff workspace. The left navigation is foldable and grouped by Overview,
-              Transport, Vehicle, and System so the staff side can grow into multiple modules.
+              This is the staff workspace. The left navigation expands on hover and keeps the
+              operational modules within easy reach while preserving space for the main dashboard.
             </div>
           </section>
 

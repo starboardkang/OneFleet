@@ -34,6 +34,7 @@ const TimePickerModal: FunctionComponent<TimePickerModalProps> = ({ value, onCha
   const [hour, setHour] = useState(parsedValue.hour)
   const [minute, setMinute] = useState(parsedValue.minute)
   const [period, setPeriod] = useState<'AM' | 'PM'>(parsedValue.period)
+  const [activeField, setActiveField] = useState<'hour' | 'minute'>('hour')
 
   const handleConfirm = () => {
     const normalizedHour = Math.min(12, Math.max(1, Number(hour) || 1))
@@ -50,9 +51,11 @@ const TimePickerModal: FunctionComponent<TimePickerModalProps> = ({ value, onCha
         <div className={styles.body}>
           <div className={styles.inputGroup}>
             <input
-              className={styles.hourInput}
+              className={`${styles.timeInput} ${activeField === 'hour' ? styles.activeTimeInput : ''}`}
               value={hour}
               onChange={(event) => setHour(event.target.value.replace(/\D/g, '').slice(0, 2))}
+              onFocus={() => setActiveField('hour')}
+              onClick={() => setActiveField('hour')}
             />
             <span className={styles.caption}>Hour</span>
           </div>
@@ -61,9 +64,11 @@ const TimePickerModal: FunctionComponent<TimePickerModalProps> = ({ value, onCha
 
           <div className={styles.inputGroup}>
             <input
-              className={styles.minuteInput}
+              className={`${styles.timeInput} ${activeField === 'minute' ? styles.activeTimeInput : ''}`}
               value={minute}
               onChange={(event) => setMinute(event.target.value.replace(/\D/g, '').slice(0, 2))}
+              onFocus={() => setActiveField('minute')}
+              onClick={() => setActiveField('minute')}
             />
             <span className={styles.caption}>Minute</span>
           </div>

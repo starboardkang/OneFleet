@@ -310,20 +310,58 @@ const RequestFormBase: FunctionComponent<RequestFormBaseProps> = ({
           </div>
 
           <div className={styles.twoColumnRow}>
-            <button
-              type="button"
-              className={`${styles.pickerTrigger} ${validation.dateNeeded ? styles.invalidField : ''}`}
-              onClick={openDatePicker}
-            >
-              {formatDateLabel(dateNeeded)}
-            </button>
-            <button
-              type="button"
-              className={`${styles.pickerTrigger} ${validation.timeNeeded ? styles.invalidField : ''}`}
-              onClick={() => setActivePicker('time')}
-            >
-              {formatTimeLabel(timeNeeded)}
-            </button>
+            <div className={styles.pickerField}>
+              <button
+                type="button"
+                className={`${styles.pickerTrigger} ${validation.dateNeeded ? styles.invalidField : ''}`}
+                onClick={openDatePicker}
+              >
+                {formatDateLabel(dateNeeded)}
+              </button>
+
+              {activePicker === 'date' ? (
+                <DatePickerModal
+                  visibleMonth={visibleMonth}
+                  visibleYear={visibleYear}
+                  selectedValue={draftDateValue}
+                  onMonthChange={setVisibleMonth}
+                  onYearChange={setVisibleYear}
+                  onShiftMonth={(direction) => {
+                    const nextDate = new Date(visibleYear, visibleMonth + direction, 1)
+                    setVisibleMonth(nextDate.getMonth())
+                    setVisibleYear(nextDate.getFullYear())
+                  }}
+                  onSelectDate={setDraftDateValue}
+                  onClose={() => setActivePicker(null)}
+                  onConfirm={() => {
+                    setDateNeeded(draftDateValue)
+                    setValidationMessage('')
+                    setActivePicker(null)
+                  }}
+                />
+              ) : null}
+            </div>
+
+            <div className={styles.pickerField}>
+              <button
+                type="button"
+                className={`${styles.pickerTrigger} ${validation.timeNeeded ? styles.invalidField : ''}`}
+                onClick={() => setActivePicker('time')}
+              >
+                {formatTimeLabel(timeNeeded)}
+              </button>
+
+              {activePicker === 'time' ? (
+                <TimePickerModal
+                  value={timeNeeded}
+                  onChange={(nextValue) => {
+                    setTimeNeeded(nextValue)
+                    setValidationMessage('')
+                  }}
+                  onClose={() => setActivePicker(null)}
+                />
+              ) : null}
+            </div>
           </div>
 
           {validationMessage ? <div className={styles.validationMessage}>{validationMessage}</div> : null}
@@ -348,38 +386,6 @@ const RequestFormBase: FunctionComponent<RequestFormBaseProps> = ({
           </div>
         </div>
 
-        {activePicker === 'date' ? (
-          <DatePickerModal
-            visibleMonth={visibleMonth}
-            visibleYear={visibleYear}
-            selectedValue={draftDateValue}
-            onMonthChange={setVisibleMonth}
-            onYearChange={setVisibleYear}
-            onShiftMonth={(direction) => {
-              const nextDate = new Date(visibleYear, visibleMonth + direction, 1)
-              setVisibleMonth(nextDate.getMonth())
-              setVisibleYear(nextDate.getFullYear())
-            }}
-            onSelectDate={setDraftDateValue}
-            onClose={() => setActivePicker(null)}
-            onConfirm={() => {
-              setDateNeeded(draftDateValue)
-              setValidationMessage('')
-              setActivePicker(null)
-            }}
-          />
-        ) : null}
-
-        {activePicker === 'time' ? (
-          <TimePickerModal
-            value={timeNeeded}
-            onChange={(nextValue) => {
-              setTimeNeeded(nextValue)
-              setValidationMessage('')
-            }}
-            onClose={() => setActivePicker(null)}
-          />
-        ) : null}
       </div>
     </div>
   )
