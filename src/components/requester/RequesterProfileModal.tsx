@@ -17,6 +17,7 @@ type RequesterProfileModalProps = {
   avatarUrl: string | null
   onClose: () => void
   onSave: (nextProfile: RequesterProfile, nextAvatarUrl: string | null) => void
+  profileLabel?: string
 }
 
 export default function RequesterProfileModal({
@@ -24,6 +25,7 @@ export default function RequesterProfileModal({
   avatarUrl,
   onClose,
   onSave,
+  profileLabel = 'Requester',
 }: RequesterProfileModalProps) {
   useBodyScrollLock()
 
@@ -77,7 +79,7 @@ export default function RequesterProfileModal({
       <div className={styles.profileModal} onClick={(event) => event.stopPropagation()}>
         <div className={styles.profileModalHeader}>
           <div>
-            <div className={styles.profileModalEyebrow}>Requester Profile</div>
+            <div className={styles.profileModalEyebrow}>{profileLabel} Profile</div>
             <h2 className={styles.profileModalTitle}>Edit Profile</h2>
           </div>
           <ModalCloseButton
@@ -93,7 +95,7 @@ export default function RequesterProfileModal({
               {draftAvatarUrl ? (
                 <img
                   src={draftAvatarUrl}
-                  alt="Requester profile"
+                  alt={`${profileLabel} profile`}
                   className={styles.profileAvatarImage}
                 />
               ) : (
