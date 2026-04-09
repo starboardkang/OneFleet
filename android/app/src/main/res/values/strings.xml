@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">OneFleet</string>
+    <string name="title_activity_main">OneFleet</string>
+    <string name="package_name">com.onefleet.app</string>
+    <string name="custom_url_scheme">com.onefleet.app</string>
+</resources>
