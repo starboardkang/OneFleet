@@ -138,8 +138,9 @@ export default function RequesterProfileModal({
             <input
               className={styles.profileInput}
               value={draftProfile.office}
-              onChange={(event) => handleFieldChange('office', event.target.value)}
-              placeholder="Office"
+              disabled
+              aria-label="Assigned role"
+              placeholder="Assigned Role"
             />
             <input
               className={styles.profileInput}
@@ -156,7 +157,8 @@ export default function RequesterProfileModal({
             <input
               className={styles.profileInput}
               value={draftProfile.employeeId}
-              onChange={(event) => handleFieldChange('employeeId', event.target.value)}
+              disabled
+              aria-label="Assigned ID number"
               placeholder="Employee ID"
             />
             <textarea

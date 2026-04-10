@@ -9,6 +9,20 @@ type RequestTripDetailsModalProps = {
   onEdit: () => void
 }
 
+function formatLongDate(value: string) {
+  const parsed = new Date(`${value}T00:00:00`)
+
+  if (Number.isNaN(parsed.getTime())) {
+    return value
+  }
+
+  return parsed.toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  })
+}
+
 function DetailField({
   label,
   value,
@@ -73,7 +87,10 @@ export default function RequestTripDetailsModal({
                   <DetailField label="Province" value={request.province} />
                 </div>
                 <div className={styles.tripTwoColumn}>
-                  <DetailField label="Date needed" value={request.dateNeeded} />
+                  <DetailField label="From" value={formatLongDate(request.dateFrom)} />
+                  <DetailField label="To" value={formatLongDate(request.dateTo)} />
+                </div>
+                <div className={styles.tripTwoColumn}>
                   <DetailField label="Time needed" value={request.timeNeeded} />
                 </div>
               </div>

@@ -38,7 +38,8 @@ const initialRequests: RequestItem[] = [
     street: 'Kapitolyo',
     province: 'Metro Manila',
     city: 'Pasig City',
-    dateNeeded: '2026-04-06',
+    dateFrom: '2026-04-06',
+    dateTo: '2026-04-06',
     timeNeeded: '1:00 PM',
     driver: 'Juan Luna',
     vehicle: 'SAB - 2132 Â· Toyota Avanza',
@@ -59,7 +60,8 @@ const initialRequests: RequestItem[] = [
     street: 'Caruncho Avenue',
     province: 'Metro Manila',
     city: 'Pasig City',
-    dateNeeded: '2026-04-08',
+    dateFrom: '2026-04-08',
+    dateTo: '2026-04-10',
     timeNeeded: '9:00 AM',
     driver: 'Pending assignment',
     vehicle: 'To be assigned',
@@ -79,7 +81,8 @@ const initialRequests: RequestItem[] = [
     street: 'Kapitolyo',
     province: 'Metro Manila',
     city: 'Pasig City',
-    dateNeeded: '2026-04-09',
+    dateFrom: '2026-04-09',
+    dateTo: '2026-04-11',
     timeNeeded: '3:30 PM',
     driver: 'â€”',
     vehicle: 'â€”',
@@ -99,7 +102,8 @@ const initialRequests: RequestItem[] = [
     street: 'Capitol Commons',
     province: 'Metro Manila',
     city: 'Pasig City',
-    dateNeeded: '2026-03-28',
+    dateFrom: '2026-03-28',
+    dateTo: '2026-03-29',
     timeNeeded: '10:30 AM',
     driver: 'Maria Santos',
     vehicle: 'SAA - 1098 - Toyota Innova',
@@ -119,7 +123,8 @@ const initialRequests: RequestItem[] = [
     street: 'Pasig Mega Market',
     province: 'Metro Manila',
     city: 'Pasig City',
-    dateNeeded: '2026-03-29',
+    dateFrom: '2026-03-29',
+    dateTo: '2026-03-29',
     timeNeeded: '8:00 AM',
     driver: '--',
     vehicle: '--',
@@ -139,6 +144,24 @@ function formatRequestedAt(dateValue: string) {
     day: 'numeric',
     year: 'numeric',
   })}`
+}
+
+function formatLongDate(dateValue: string) {
+  return new Date(`${dateValue}T00:00:00`).toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  })
+}
+
+function formatDateRange(dateFrom: string, dateTo: string) {
+  const formattedFrom = formatLongDate(dateFrom)
+  const formattedTo = formatLongDate(dateTo)
+  return dateFrom === dateTo ? formattedFrom : `${formattedFrom} to ${formattedTo}`
+}
+
+function formatScheduleRange(dateFrom: string, dateTo: string, timeValue: string) {
+  return `${formatDateRange(dateFrom, dateTo)} · ${timeValue}`
 }
 
 function formatSchedule(dateValue: string, timeValue: string) {
@@ -178,13 +201,14 @@ function buildRequestFromForm(
     street: values.street,
     province: values.province,
     city: values.city,
-    dateNeeded: values.dateNeeded,
+    dateFrom: values.dateFrom,
+    dateTo: values.dateTo,
     timeNeeded: values.timeNeeded,
     driver: status === 'Approved' ? 'Juan Luna' : status === 'Processing' ? 'Pending assignment' : 'â€”',
     vehicle: status === 'Approved' ? 'SAB - 2132 Â· Toyota Avanza' : status === 'Processing' ? 'To be assigned' : 'â€”',
     plateNumber: status === 'Approved' ? 'SAB - 2132' : status === 'Processing' ? 'Pending assignment' : 'â€”',
     destination: values.street,
-    schedule: formatSchedule(values.dateNeeded, values.timeNeeded),
+    schedule: formatScheduleRange(values.dateFrom, values.dateTo, values.timeNeeded),
     remarks,
   }
 }
@@ -371,10 +395,10 @@ export function RequesterPortal({
             <div className={styles.pastNoticeCard}>
               <div className={styles.pastNoticeTitle}>Request Rules</div>
               <div className={styles.pastNoticeText}>
-                Request for vehicle use shall be made at least <b>two (2) to three (3) days</b> from the intended date of use.
+                Request for vehicle use shall be made at least <b>two (2) to three (3) days</b> before the first intended date of use.
               </div>
               <div className={styles.pastNoticeText}>
-                Failure to use the vehicle at the given date and time forfeits one's right to use the vehicle assigned.
+                Failure to use the vehicle within the approved date range and time forfeits one's right to use the vehicle assigned.
               </div>
             </div>
           ) : null}
@@ -428,7 +452,8 @@ export function RequesterPortal({
                                 street: request.street,
                                 province: request.province,
                                 city: request.city,
-                                dateNeeded: request.dateNeeded,
+                                dateFrom: request.dateFrom,
+                                dateTo: request.dateTo,
                                 timeNeeded: request.timeNeeded,
                               },
                               request.id,
@@ -490,7 +515,8 @@ export function RequesterPortal({
             street: editingRequest.street,
             province: editingRequest.province,
             city: editingRequest.city,
-            dateNeeded: editingRequest.dateNeeded,
+            dateFrom: editingRequest.dateFrom,
+            dateTo: editingRequest.dateTo,
             timeNeeded: editingRequest.timeNeeded,
           }}
           onSubmit={(values) => {

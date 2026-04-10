@@ -26,7 +26,8 @@ export type RequestDetailsDto = RequestListItemDto & {
   street: string
   province: string
   city: string
-  dateNeeded: string
+  dateFrom: string
+  dateTo: string
   timeNeeded: string
   plateNumber: string
 }
@@ -38,7 +39,8 @@ export type CreateRequestPayload = {
   street: string
   province: string
   city: string
-  dateNeeded: string
+  dateFrom: string
+  dateTo: string
   timeNeeded: string
 }
 

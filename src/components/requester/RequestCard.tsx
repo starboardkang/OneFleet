@@ -13,7 +13,8 @@ export type RequestItem = {
   street: string
   province: string
   city: string
-  dateNeeded: string
+  dateFrom: string
+  dateTo: string
   timeNeeded: string
   driver: string
   vehicle: string
@@ -43,6 +44,22 @@ function statusClasses(status: RequestStatus) {
     case 'Denied':
       return styles.statusDenied
   }
+}
+
+function formatSchedule(request: RequestItem) {
+  const formatLongDate = (value: string) =>
+    new Date(`${value}T00:00:00`).toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+    })
+
+  const dateRange =
+    request.dateFrom === request.dateTo
+      ? formatLongDate(request.dateFrom)
+      : `${formatLongDate(request.dateFrom)} to ${formatLongDate(request.dateTo)}`
+
+  return `${dateRange} · ${request.timeNeeded}`
 }
 
 const disabledButtonClass = styles.buttonDisabled
@@ -84,8 +101,8 @@ export default function RequestCard({
           <div className={styles.requestDetailValue}>{request.destination}</div>
         </div>
         <div className={styles.requestDetailCard}>
-          <div className={styles.requestDetailLabel}>Date and Time Needed</div>
-          <div className={styles.requestDetailValue}>{request.schedule}</div>
+          <div className={styles.requestDetailLabel}>Dates and Time Needed</div>
+          <div className={styles.requestDetailValue}>{formatSchedule(request)}</div>
         </div>
       </div>
 

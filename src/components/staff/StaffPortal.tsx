@@ -4,6 +4,7 @@ import RequesterProfileModal, { type RequesterProfile } from '../requester/Reque
 import RequestFormCreate from '../requester/RequestFormCreate'
 import RequestTripDetailsModal from '../requester/RequestTripDetailsModal'
 import ModalCloseButton from '../common/ModalCloseButton'
+import SegmentedControl from '../common/SegmentedControl'
 import styles from '../../styles/modules/staff/StaffPortal.module.css'
 import type { RequestFormValues } from '../requester/RequestFormBase'
 import type { RequestItem } from '../requester/RequestCard'
@@ -26,7 +27,18 @@ type StaffSection = {
 type StaffRequestStatus = 'Approved' | 'Denied' | 'Processing'
 type TransportTab = 'all' | 'dispatch' | 'approval'
 type RequestListView = 'active' | 'past'
-type VehicleType = 'Van' | 'SUV' | 'Sedan'
+type VehicleOption = {
+  id: string
+  label: string
+  plateNumber: string
+  reserved: boolean
+}
+
+type DriverOption = {
+  id: string
+  name: string
+  contactNumber: string
+}
 
 type StaffRequestItem = {
   id: string
@@ -39,7 +51,8 @@ type StaffRequestItem = {
   street: string
   province: string
   city: string
-  dateNeeded: string
+  dateFrom: string
+  dateTo: string
   timeNeeded: string
   plateNumber: string
   vehicle: string
@@ -54,10 +67,11 @@ type ApprovalDispatchItem = {
   drn: string
   requester: string
   destination: string
-  dateNeeded: string
+  dateFrom: string
+  dateTo: string
   assignedDriverName: string
   assignedDriverContact: string
-  vehicleType: VehicleType
+  vehicleType: string
   vehiclePlateNumber: string
   gasAllocationReference: string
   overtimeRequest: string
@@ -68,11 +82,35 @@ type DispatchFormState = {
   drn: string
   assignedDriverName: string
   assignedDriverContact: string
-  vehicleType: VehicleType
+  vehicleType: string
   vehiclePlateNumber: string
   gasAllocationReference: string
   overtimeRequest: string
 }
+
+const roleOptions = [
+  'Super Administrator',
+  'Administrator',
+  'Fleet Manager',
+  'Dispatcher',
+  'Inspector',
+  'Driver',
+  'Clerk',
+] as const
+
+const availableDrivers: DriverOption[] = [
+  { id: 'drv-001', name: 'Juan Luna', contactNumber: '+63 912 345 6789' },
+  { id: 'drv-002', name: 'Maria Santos', contactNumber: '+63 917 221 3401' },
+  { id: 'drv-003', name: 'Carlo Reyes', contactNumber: '+63 918 884 1120' },
+  { id: 'drv-004', name: 'Andrea Cruz', contactNumber: '+63 919 557 2284' },
+]
+
+const vehicleCatalog: VehicleOption[] = [
+  { id: 'veh-001', label: 'Toyota Avanza', plateNumber: 'SAB - 2132', reserved: true },
+  { id: 'veh-002', label: 'Toyota Innova', plateNumber: 'SAA - 1098', reserved: false },
+  { id: 'veh-003', label: 'Mitsubishi Montero Sport', plateNumber: 'NBC - 4417', reserved: false },
+  { id: 'veh-004', label: 'Hyundai Starex', plateNumber: 'TQR - 2026', reserved: false },
+]
 
 const transportRequests: StaffRequestItem[] = [
   {
@@ -86,7 +124,8 @@ const transportRequests: StaffRequestItem[] = [
     street: 'Kapitolyo',
     province: 'Metro Manila',
     city: 'Pasig City',
-    dateNeeded: 'March 27, 2026',
+    dateFrom: 'March 27, 2026',
+    dateTo: 'March 27, 2026',
     timeNeeded: '13:00 PST',
     plateNumber: 'SAB - 2132',
     vehicle: 'SAB - 2132 - Toyota Avanza',
@@ -108,7 +147,8 @@ const transportRequests: StaffRequestItem[] = [
     street: 'Kapitolyo',
     province: 'Metro Manila',
     city: 'Pasig City',
-    dateNeeded: 'March 27, 2026',
+    dateFrom: 'March 27, 2026',
+    dateTo: 'March 27, 2026',
     timeNeeded: '13:00 PST',
     plateNumber: 'SAB - 2132',
     vehicle: 'SAB - 2132 - Toyota Avanza',
@@ -119,6 +159,29 @@ const transportRequests: StaffRequestItem[] = [
     remarks:
       'Driver and vehicle request has been approved please arrive at the designated pick up location on-time.',
   },
+  {
+    id: 'RVDSS - 003',
+    requestedOn: 'April 4, 2026',
+    requestType: 'DRIVER AND VEHICLE',
+    requester: 'Mia Reyes',
+    requesterPhone: '+63 917 345 1122',
+    passengerNames: ['Mia Reyes', 'Paolo Cruz'],
+    purpose: 'Multi-day site inspection and inter-office coordination.',
+    street: 'Ortigas Center',
+    province: 'Metro Manila',
+    city: 'Pasig City',
+    dateFrom: 'April 10, 2026',
+    dateTo: 'April 12, 2026',
+    timeNeeded: '09:00 PST',
+    plateNumber: 'Pending assignment',
+    vehicle: 'Pending vehicle assignment',
+    destination: 'Ortigas Center',
+    neededAt: 'April 10, 2026 to April 12, 2026 - 09:00 PST',
+    status: 'Processing',
+    view: 'active',
+    remarks:
+      'This request is currently awaiting dispatch assignment and approval.',
+  },
 ]
 
 function formatLongDate(dateValue: string) {
@@ -127,6 +190,10 @@ function formatLongDate(dateValue: string) {
     day: 'numeric',
     year: 'numeric',
   })
+}
+
+function formatDateRange(dateFrom: string, dateTo: string) {
+  return dateFrom === dateTo ? dateFrom : `${dateFrom} to ${dateTo}`
 }
 
 function buildStaffRequestFromForm(
@@ -157,12 +224,13 @@ function buildStaffRequestFromForm(
     street: values.street,
     province: values.province,
     city: values.city,
-    dateNeeded: formatLongDate(values.dateNeeded),
+    dateFrom: formatLongDate(values.dateFrom),
+    dateTo: formatLongDate(values.dateTo),
     timeNeeded: values.timeNeeded,
     plateNumber: 'Pending assignment',
     vehicle: 'Pending vehicle assignment',
     destination: values.street,
-    neededAt: `${formatLongDate(values.dateNeeded)} - ${values.timeNeeded} PST`,
+    neededAt: `${formatDateRange(formatLongDate(values.dateFrom), formatLongDate(values.dateTo))} - ${values.timeNeeded} PST`,
     status: 'Processing',
     view: 'active',
     remarks: `Your ${requestTypeLabel.toLowerCase()} request has been submitted and is currently being reviewed by the dispatch office.`,
@@ -192,7 +260,8 @@ function mapStaffRequestToTripDetails(request: StaffRequestItem): RequestItem {
     street: request.street,
     province: request.province,
     city: request.city,
-    dateNeeded: request.dateNeeded,
+    dateFrom: request.dateFrom,
+    dateTo: request.dateTo,
     timeNeeded: request.timeNeeded,
     driver: request.requester,
     vehicle: request.vehicle,
@@ -205,6 +274,9 @@ function mapStaffRequestToTripDetails(request: StaffRequestItem): RequestItem {
 
 function DispatchRequestModal({
   values,
+  requestOptions,
+  driverOptions,
+  vehicleOptions,
   validationMessage,
   onChange,
   onClose,
@@ -212,6 +284,9 @@ function DispatchRequestModal({
   onSubmit,
 }: {
   values: DispatchFormState
+  requestOptions: StaffRequestItem[]
+  driverOptions: DriverOption[]
+  vehicleOptions: VehicleOption[]
   validationMessage: string
   onChange: (field: keyof DispatchFormState, value: string) => void
   onClose: () => void
@@ -234,44 +309,61 @@ function DispatchRequestModal({
           <div className={styles.dispatchSectionTitle}>RVDSS Details</div>
           <label className={styles.dispatchField}>
             <span className={styles.dispatchFieldLabel}>DRN</span>
-            <input
+            <select
               className={styles.dispatchInput}
               value={values.drn}
               onChange={(event) => onChange('drn', event.target.value)}
-            />
+            >
+              <option value="">Select an active RVDSS</option>
+              {requestOptions.map((request) => (
+                <option key={request.id} value={request.id}>
+                  {request.id}
+                </option>
+              ))}
+            </select>
           </label>
 
           <div className={styles.dispatchSectionTitle}>Driver &amp; Vehicle Assignment</div>
           <div className={styles.dispatchTwoColumn}>
             <label className={styles.dispatchField}>
               <span className={styles.dispatchFieldLabel}>Assigned Driver Name</span>
-              <input
+              <select
                 className={styles.dispatchInput}
                 value={values.assignedDriverName}
                 onChange={(event) => onChange('assignedDriverName', event.target.value)}
-              />
+              >
+                <option value="">Select a driver</option>
+                {driverOptions.map((driver) => (
+                  <option key={driver.id} value={driver.name}>
+                    {driver.name}
+                  </option>
+                ))}
+              </select>
             </label>
             <label className={styles.dispatchField}>
               <span className={styles.dispatchFieldLabel}>Assigned Driver Contact No.</span>
               <input
                 className={styles.dispatchInput}
                 value={values.assignedDriverContact}
-                onChange={(event) => onChange('assignedDriverContact', event.target.value)}
+                readOnly
               />
             </label>
           </div>
 
           <div className={styles.dispatchTwoColumn}>
             <label className={styles.dispatchField}>
-              <span className={styles.dispatchFieldLabel}>Vehicle Type</span>
+              <span className={styles.dispatchFieldLabel}>Vehicle Brand and Model</span>
               <select
                 className={styles.dispatchInput}
                 value={values.vehicleType}
                 onChange={(event) => onChange('vehicleType', event.target.value)}
               >
-                <option value="Van">Van</option>
-                <option value="SUV">SUV</option>
-                <option value="Sedan">Sedan</option>
+                <option value="">Select an available vehicle</option>
+                {vehicleOptions.map((vehicle) => (
+                  <option key={vehicle.id} value={vehicle.label}>
+                    {vehicle.label}
+                  </option>
+                ))}
               </select>
             </label>
             <label className={styles.dispatchField}>
@@ -279,7 +371,7 @@ function DispatchRequestModal({
               <input
                 className={styles.dispatchInput}
                 value={values.vehiclePlateNumber}
-                onChange={(event) => onChange('vehiclePlateNumber', event.target.value)}
+                readOnly
               />
             </label>
           </div>
@@ -328,14 +420,7 @@ const staffSections: StaffSection[] = [
     items: [
       {
         label: 'Dashboard',
-        icon: (
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="3" y="3" width="8" height="8" rx="2" />
-            <rect x="13" y="3" width="8" height="5" rx="2" />
-            <rect x="13" y="10" width="8" height="11" rx="2" />
-            <rect x="3" y="13" width="8" height="8" rx="2" />
-          </svg>
-        ),
+        icon: <i className="bx bxs-dashboard" aria-hidden="true" />,
       },
     ],
   },
@@ -344,23 +429,11 @@ const staffSections: StaffSection[] = [
     items: [
       {
         label: 'Transport Request',
-        icon: (
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M7 3h7l5 5v13H7z" />
-            <path d="M14 3v5h5" />
-          </svg>
-        ),
+        icon: <i className="bx bx-file" aria-hidden="true" />,
       },
       {
         label: 'Trip Management',
-        icon: (
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M8 5v14" />
-            <path d="M16 5v14" />
-            <path d="M5 9h14" />
-            <path d="M5 15h14" />
-          </svg>
-        ),
+        icon: <i className="bx bx-map-alt" aria-hidden="true" />,
       },
     ],
   },
@@ -368,46 +441,20 @@ const staffSections: StaffSection[] = [
     title: 'VEHICLE',
     items: [
       {
-        label: 'Vehicles',
-        icon: (
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M5 16l1.5-5h11L19 16" />
-            <path d="M7 16h10" />
-            <circle cx="8" cy="17" r="1.5" />
-            <circle cx="16" cy="17" r="1.5" />
-          </svg>
-        ),
+        label: 'Vehicles and Drivers',
+        icon: <i className="bx bxs-car" aria-hidden="true" />,
       },
       {
         label: 'Maintenance',
-        icon: (
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="m14 7 3-3 3 3-3 3" />
-            <path d="M4 20l8-8" />
-            <path d="m10 6 8 8" />
-          </svg>
-        ),
+        icon: <i className="bx bx-wrench" aria-hidden="true" />,
       },
       {
         label: 'Fuel Management',
-        icon: (
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M7 20V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v14" />
-            <path d="M15 10h2l2 2v5a1 1 0 0 1-1 1h-1" />
-            <path d="M9 8h4" />
-          </svg>
-        ),
+        icon: <i className="bx bx-gas-pump" aria-hidden="true" />,
       },
       {
-        label: 'Drivers',
-        icon: (
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2" />
-            <circle cx="9.5" cy="7" r="3" />
-            <path d="M20 8v6" />
-            <path d="M17 11h6" />
-          </svg>
-        ),
+        label: 'Registration',
+        icon: <i className="bx bx-detail" aria-hidden="true" />,
       },
     ],
   },
@@ -416,25 +463,11 @@ const staffSections: StaffSection[] = [
     items: [
       {
         label: 'Users',
-        icon: (
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2" />
-            <circle cx="9.5" cy="7" r="3" />
-            <path d="M20 21v-2a4 4 0 0 0-3-3.87" />
-            <path d="M16 4.13a3 3 0 0 1 0 5.74" />
-          </svg>
-        ),
+        icon: <i className="bx bx-group" aria-hidden="true" />,
       },
       {
         label: 'Document',
-        icon: (
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" />
-            <path d="M14 3v5h5" />
-            <path d="M9 13h6" />
-            <path d="M9 17h4" />
-          </svg>
-        ),
+        icon: <i className="bx bx-file-blank" aria-hidden="true" />,
       },
     ],
   },
@@ -448,8 +481,10 @@ export default function StaffPortal({
 }: StaffPortalProps) {
   const [isSidebarHovered, setIsSidebarHovered] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isRoleMenuOpen, setIsRoleMenuOpen] = useState(false)
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
   const [isCreateOpen, setIsCreateOpen] = useState(false)
+  const [activeRole, setActiveRole] = useState<(typeof roleOptions)[number]>('Administrator')
   const [activeItem, setActiveItem] = useState('Transport Request')
   const [activeTransportTab, setActiveTransportTab] = useState<TransportTab>('all')
   const [requestListView, setRequestListView] = useState<RequestListView>('active')
@@ -497,14 +532,56 @@ export default function StaffPortal({
   }
   const visibleAllRequests = requests.filter((request) => request.view === requestListView)
   const dispatchRequests = requests.filter((request) => request.status === 'Processing')
+  const unreservedVehicles = vehicleCatalog.filter((vehicle) => !vehicle.reserved)
+
+  const applyDispatchFieldChange = (field: keyof DispatchFormState, value: string) => {
+    if (field === 'drn') {
+      const selectedRequest = dispatchRequests.find((request) => request.id === value) ?? null
+      setDispatchSourceRequest(selectedRequest)
+      setDispatchForm({
+        drn: value,
+        assignedDriverName: '',
+        assignedDriverContact: '',
+        vehicleType: '',
+        vehiclePlateNumber: '',
+        gasAllocationReference: '',
+        overtimeRequest: '',
+      })
+      setDispatchValidationMessage('')
+      return
+    }
+
+    setDispatchForm((current) => {
+      if (field === 'assignedDriverName') {
+        const selectedDriver = availableDrivers.find((driver) => driver.name === value)
+        return {
+          ...current,
+          assignedDriverName: value,
+          assignedDriverContact: selectedDriver?.contactNumber ?? '',
+        }
+      }
+
+      if (field === 'vehicleType') {
+        const selectedVehicle = unreservedVehicles.find((vehicle) => vehicle.label === value)
+        return {
+          ...current,
+          vehicleType: value,
+          vehiclePlateNumber: selectedVehicle?.plateNumber ?? '',
+        }
+      }
+
+      return { ...current, [field]: value }
+    })
+    setDispatchValidationMessage('')
+  }
 
   const resetDispatchForm = (source?: StaffRequestItem | null) => {
     setDispatchForm({
       drn: source?.id ?? '',
-      assignedDriverName: source?.requester ?? '',
-      assignedDriverContact: source?.requesterPhone ?? '',
-      vehicleType: 'Van',
-      vehiclePlateNumber: source?.plateNumber === 'Pending assignment' ? '' : source?.plateNumber ?? '',
+      assignedDriverName: '',
+      assignedDriverContact: '',
+      vehicleType: '',
+      vehiclePlateNumber: '',
       gasAllocationReference: '',
       overtimeRequest: '',
     })
@@ -532,7 +609,15 @@ export default function StaffPortal({
           <div className={styles.menuRoot}>
             <button
               type="button"
-              onClick={() => setIsMenuOpen((current) => !current)}
+              onClick={() => {
+                setIsMenuOpen((current) => {
+                  const next = !current
+                  if (!next) {
+                    setIsRoleMenuOpen(false)
+                  }
+                  return next
+                })
+              }}
               className={styles.userMenuButton}
             >
               <div className={styles.userAvatar}>
@@ -562,9 +647,46 @@ export default function StaffPortal({
 
             {isMenuOpen ? (
               <div className={styles.menuPanel}>
+                <div className={styles.roleMenuRoot}>
+                  <button
+                    type="button"
+                    onClick={() => setIsRoleMenuOpen((current) => !current)}
+                    className={styles.roleMenuTrigger}
+                  >
+                    <span>Role Preview</span>
+                    <span className={styles.roleMenuTriggerValue}>{activeRole}</span>
+                  </button>
+
+                  {isRoleMenuOpen ? (
+                    <div className={styles.roleMenuList}>
+                      <div className={styles.roleMenuTitle}>Role Preview</div>
+                      <div className={styles.roleMenuText}>
+                        Switch roles to preview visibility for each module in the system.
+                      </div>
+                      {roleOptions.map((role) => (
+                        <button
+                          key={role}
+                          type="button"
+                          onClick={() => {
+                            setActiveRole(role)
+                            setIsRoleMenuOpen(false)
+                            setIsMenuOpen(false)
+                          }}
+                          className={[
+                            styles.roleMenuItem,
+                            activeRole === role ? styles.roleMenuItemActive : '',
+                          ].join(' ')}
+                        >
+                          {role}
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
                 <button
                   type="button"
                   onClick={() => {
+                    setIsRoleMenuOpen(false)
                     setIsMenuOpen(false)
                     setIsProfileModalOpen(true)
                   }}
@@ -572,7 +694,14 @@ export default function StaffPortal({
                 >
                   Profile
                 </button>
-                <button type="button" onClick={onLogout} className={styles.menuItemDanger}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsRoleMenuOpen(false)
+                    onLogout()
+                  }}
+                  className={styles.menuItemDanger}
+                >
                   Logout
                 </button>
               </div>
@@ -637,38 +766,6 @@ export default function StaffPortal({
             ))}
           </div>
 
-          <div
-            className={[
-              styles.rolePreviewCard,
-              isSidebarHovered ? styles.rolePreviewVisible : styles.rolePreviewHidden,
-            ].join(' ')}
-          >
-            <div className={styles.rolePreviewTitle}>ROLE PREVIEW</div>
-            <div className={styles.rolePreviewText}>
-              Switch roles to preview visibility for each module in the system.
-            </div>
-            <button type="button" className={styles.rolePreviewButton}>
-              <span className={styles.rolePreviewButtonText}>Officer Administrator</span>
-            </button>
-          </div>
-
-          <div
-            className={[
-              styles.sidebarFooter,
-              isSidebarHovered ? styles.sidebarFooterExpanded : styles.sidebarFooterCollapsed,
-            ].join(' ')}
-            >
-              <div className={styles.sidebarFooterAvatar} />
-            <div
-              className={[
-                styles.sidebarFooterText,
-                isSidebarHovered ? styles.sidebarFooterTextVisible : styles.sidebarFooterTextHidden,
-              ].join(' ')}
-            >
-              <div className={styles.sidebarFooterName}>{profile.fullName}</div>
-              <div className={styles.sidebarFooterRole}>{profile.office.toUpperCase()}</div>
-            </div>
-          </div>
         </aside>
 
         <main
@@ -723,28 +820,15 @@ export default function StaffPortal({
 
               {activeTransportTab === 'all' ? (
                 <div className={styles.transportSummaryRow}>
-                  <div className={styles.transportViewToggle}>
-                    <button
-                      type="button"
-                      className={[
-                        styles.transportViewButton,
-                        requestListView === 'active' ? styles.transportViewButtonActive : '',
-                      ].join(' ')}
-                      onClick={() => setRequestListView('active')}
-                    >
-                      ACTIVE REQUESTS
-                    </button>
-                    <button
-                      type="button"
-                      className={[
-                        styles.transportViewButton,
-                        requestListView === 'past' ? styles.transportViewButtonActive : '',
-                      ].join(' ')}
-                      onClick={() => setRequestListView('past')}
-                    >
-                      PAST REQUESTS
-                    </button>
-                  </div>
+                  <SegmentedControl
+                    className={styles.transportViewToggle}
+                    options={[
+                      { label: 'ACTIVE REQUESTS', value: 'active' },
+                      { label: 'PAST REQUESTS', value: 'past' },
+                    ]}
+                    value={requestListView}
+                    onChange={setRequestListView}
+                  />
 
                   <div className={styles.transportStats}>
                     <article className={[styles.transportStatCard, styles.transportStatNeutral].join(' ')}>
@@ -827,7 +911,7 @@ export default function StaffPortal({
                           <div className={styles.transportInfoValue}>{request.destination}</div>
                         </div>
                         <div className={styles.transportInfoCard}>
-                          <div className={styles.transportInfoLabel}>Date and Time Needed</div>
+                          <div className={styles.transportInfoLabel}>Dates and Time Needed</div>
                           <div className={styles.transportInfoValue}>{request.neededAt}</div>
                         </div>
                       </div>
@@ -868,7 +952,7 @@ export default function StaffPortal({
                     <span>DRN</span>
                     <span>Requester</span>
                     <span>Destination</span>
-                    <span>Date Needed</span>
+                    <span>Date Range</span>
                     <span>Status</span>
                     <span>Action</span>
                   </div>
@@ -878,7 +962,7 @@ export default function StaffPortal({
                         <span>{request.id}</span>
                         <span>{request.requester}</span>
                         <span>{request.destination}</span>
-                        <span>{request.neededAt.split(' - ')[0]}</span>
+                        <span>{formatDateRange(request.dateFrom, request.dateTo)}</span>
                         <span className={styles.dispatchStatusChip}>For Dispatch</span>
                         <span className={styles.dispatchActionGroup}>
                           <button
@@ -988,11 +1072,11 @@ export default function StaffPortal({
       {isDispatchModalOpen ? (
         <DispatchRequestModal
           values={dispatchForm}
+          requestOptions={dispatchRequests}
+          driverOptions={availableDrivers}
+          vehicleOptions={unreservedVehicles}
           validationMessage={dispatchValidationMessage}
-          onChange={(field, value) => {
-            setDispatchForm((current) => ({ ...current, [field]: value }))
-            setDispatchValidationMessage('')
-          }}
+          onChange={applyDispatchFieldChange}
           onClose={() => {
             setIsDispatchModalOpen(false)
             setDispatchSourceRequest(null)
@@ -1017,7 +1101,8 @@ export default function StaffPortal({
                 drn: dispatchForm.drn.trim(),
                 requester: sourceRequest?.requester ?? profile.fullName,
                 destination: sourceRequest?.destination ?? '',
-                dateNeeded: sourceRequest?.dateNeeded ?? '',
+                dateFrom: sourceRequest?.dateFrom ?? '',
+                dateTo: sourceRequest?.dateTo ?? '',
                 assignedDriverName: dispatchForm.assignedDriverName.trim(),
                 assignedDriverContact: dispatchForm.assignedDriverContact.trim(),
                 vehicleType: dispatchForm.vehicleType,

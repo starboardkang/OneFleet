@@ -13,7 +13,7 @@ const requestTypeOptions = [
   'HEAVY EQUIPMENT',
 ] as const
 
-type PickerType = 'date' | 'time' | null
+type PickerType = 'dateFrom' | 'dateTo' | 'time' | null
 
 export type RequestFormValues = {
   requestType: (typeof requestTypeOptions)[number]
@@ -22,7 +22,8 @@ export type RequestFormValues = {
   street: string
   province: string
   city: string
-  dateNeeded: string
+  dateFrom: string
+  dateTo: string
   timeNeeded: string
 }
 
@@ -52,9 +53,9 @@ const parseDateValue = (value: string) => {
   }
 }
 
-const formatDateLabel = (value: string) => {
+const formatDateLabel = (value: string, fallback: string) => {
   if (!value) {
-    return 'Date Needed'
+    return fallback
   }
 
   const parsedDate = new Date(`${value}T00:00:00`)
@@ -81,18 +82,19 @@ const RequestFormBase: FunctionComponent<RequestFormBaseProps> = ({
   const [street, setStreet] = useState(initialValues?.street ?? '')
   const [province, setProvince] = useState(initialValues?.province ?? '')
   const [city, setCity] = useState(initialValues?.city ?? '')
-  const [dateNeeded, setDateNeeded] = useState(initialValues?.dateNeeded ?? '')
+  const [dateFrom, setDateFrom] = useState(initialValues?.dateFrom ?? '')
+  const [dateTo, setDateTo] = useState(initialValues?.dateTo ?? '')
   const [timeNeeded, setTimeNeeded] = useState(initialValues?.timeNeeded ?? '')
   const [activePicker, setActivePicker] = useState<PickerType>(null)
   const [validationMessage, setValidationMessage] = useState('')
-  
-  const parsedInitialDate = parseDateValue(initialValues?.dateNeeded ?? '')
-  const [visibleMonth, setVisibleMonth] = useState(parsedInitialDate.month)
-  const [visibleYear, setVisibleYear] = useState(parsedInitialDate.year)
+
+  const parsedInitialDateFrom = parseDateValue(initialValues?.dateFrom ?? '')
+  const [visibleMonth, setVisibleMonth] = useState(parsedInitialDateFrom.month)
+  const [visibleYear, setVisibleYear] = useState(parsedInitialDateFrom.year)
   const [draftDateValue, setDraftDateValue] = useState(
-    initialValues?.dateNeeded ??
-      `${parsedInitialDate.year}-${String(parsedInitialDate.month + 1).padStart(2, '0')}-${String(
-        parsedInitialDate.day,
+    initialValues?.dateFrom ??
+      `${parsedInitialDateFrom.year}-${String(parsedInitialDateFrom.month + 1).padStart(2, '0')}-${String(
+        parsedInitialDateFrom.day,
       ).padStart(2, '0')}`,
   )
 
@@ -105,7 +107,8 @@ const RequestFormBase: FunctionComponent<RequestFormBaseProps> = ({
     street: street.trim().length === 0,
     province: province.trim().length === 0,
     city: city.trim().length === 0,
-    dateNeeded: dateNeeded.trim().length === 0,
+    dateFrom: dateFrom.trim().length === 0,
+    dateTo: dateTo.trim().length === 0,
     timeNeeded: timeNeeded.trim().length === 0,
   }
 
@@ -142,6 +145,16 @@ const RequestFormBase: FunctionComponent<RequestFormBaseProps> = ({
     })
   }
 
+  const resetDatePicker = (value: string) => {
+    const parsedDate = parseDateValue(value)
+    setVisibleMonth(parsedDate.month)
+    setVisibleYear(parsedDate.year)
+    setDraftDateValue(
+      value ||
+        `${parsedDate.year}-${String(parsedDate.month + 1).padStart(2, '0')}-${String(parsedDate.day).padStart(2, '0')}`,
+    )
+  }
+
   const handleReset = () => {
     setRequestType(initialValues?.requestType ?? '')
     setPassengerNames(initialValues?.passengerNames ?? [''])
@@ -149,14 +162,22 @@ const RequestFormBase: FunctionComponent<RequestFormBaseProps> = ({
     setStreet(initialValues?.street ?? '')
     setProvince(initialValues?.province ?? '')
     setCity(initialValues?.city ?? '')
-    setDateNeeded(initialValues?.dateNeeded ?? '')
+    setDateFrom(initialValues?.dateFrom ?? '')
+    setDateTo(initialValues?.dateTo ?? '')
     setTimeNeeded(initialValues?.timeNeeded ?? '')
+    setActivePicker(null)
     setValidationMessage('')
+    resetDatePicker(initialValues?.dateFrom ?? '')
   }
 
   const handleSubmit = () => {
     if (hasErrors) {
       setValidationMessage('Please complete every field before continuing.')
+      return
+    }
+
+    if (new Date(`${dateFrom}T00:00:00`) > new Date(`${dateTo}T00:00:00`)) {
+      setValidationMessage('The "To" date must be the same as or later than the "From" date.')
       return
     }
 
@@ -167,20 +188,15 @@ const RequestFormBase: FunctionComponent<RequestFormBaseProps> = ({
       street: street.trim(),
       province: province.trim(),
       city: city.trim(),
-      dateNeeded,
+      dateFrom,
+      dateTo,
       timeNeeded,
     })
   }
 
-  const openDatePicker = () => {
-    const parsedDate = parseDateValue(dateNeeded)
-    setVisibleMonth(parsedDate.month)
-    setVisibleYear(parsedDate.year)
-    setDraftDateValue(
-      dateNeeded ||
-        `${parsedDate.year}-${String(parsedDate.month + 1).padStart(2, '0')}-${String(parsedDate.day).padStart(2, '0')}`,
-    )
-    setActivePicker('date')
+  const openDatePicker = (picker: 'dateFrom' | 'dateTo') => {
+    resetDatePicker(picker === 'dateFrom' ? dateFrom : dateTo)
+    setActivePicker(picker)
   }
 
   return (
@@ -313,13 +329,13 @@ const RequestFormBase: FunctionComponent<RequestFormBaseProps> = ({
             <div className={styles.pickerField}>
               <button
                 type="button"
-                className={`${styles.pickerTrigger} ${validation.dateNeeded ? styles.invalidField : ''}`}
-                onClick={openDatePicker}
+                className={`${styles.pickerTrigger} ${validation.dateFrom ? styles.invalidField : ''}`}
+                onClick={() => openDatePicker('dateFrom')}
               >
-                {formatDateLabel(dateNeeded)}
+                {formatDateLabel(dateFrom, 'From')}
               </button>
 
-              {activePicker === 'date' ? (
+              {activePicker === 'dateFrom' ? (
                 <DatePickerModal
                   visibleMonth={visibleMonth}
                   visibleYear={visibleYear}
@@ -334,7 +350,7 @@ const RequestFormBase: FunctionComponent<RequestFormBaseProps> = ({
                   onSelectDate={setDraftDateValue}
                   onClose={() => setActivePicker(null)}
                   onConfirm={() => {
-                    setDateNeeded(draftDateValue)
+                    setDateFrom(draftDateValue)
                     setValidationMessage('')
                     setActivePicker(null)
                   }}
@@ -342,6 +358,40 @@ const RequestFormBase: FunctionComponent<RequestFormBaseProps> = ({
               ) : null}
             </div>
 
+            <div className={styles.pickerField}>
+              <button
+                type="button"
+                className={`${styles.pickerTrigger} ${validation.dateTo ? styles.invalidField : ''}`}
+                onClick={() => openDatePicker('dateTo')}
+              >
+                {formatDateLabel(dateTo, 'To')}
+              </button>
+
+              {activePicker === 'dateTo' ? (
+                <DatePickerModal
+                  visibleMonth={visibleMonth}
+                  visibleYear={visibleYear}
+                  selectedValue={draftDateValue}
+                  onMonthChange={setVisibleMonth}
+                  onYearChange={setVisibleYear}
+                  onShiftMonth={(direction) => {
+                    const nextDate = new Date(visibleYear, visibleMonth + direction, 1)
+                    setVisibleMonth(nextDate.getMonth())
+                    setVisibleYear(nextDate.getFullYear())
+                  }}
+                  onSelectDate={setDraftDateValue}
+                  onClose={() => setActivePicker(null)}
+                  onConfirm={() => {
+                    setDateTo(draftDateValue)
+                    setValidationMessage('')
+                    setActivePicker(null)
+                  }}
+                />
+              ) : null}
+            </div>
+          </div>
+
+          <div className={styles.twoColumnRow}>
             <div className={styles.pickerField}>
               <button
                 type="button"
@@ -382,10 +432,9 @@ const RequestFormBase: FunctionComponent<RequestFormBaseProps> = ({
           <div className={styles.noteRequestForContainer}>
             <span>{`Note: Request for vehicle use shall be made at least `}</span>
             <b className={styles.two2To}>two (2) to three (3) days</b>
-            <span>{` from the intended date of use. Failure to use the vehicle at the given date/time forfeits one's right to use the vehicle assigned.`}</span>
+            <span>{` before the first requested date. Failure to use the vehicle within the approved date range and time forfeits one's right to use the vehicle assigned.`}</span>
           </div>
         </div>
-
       </div>
     </div>
   )
