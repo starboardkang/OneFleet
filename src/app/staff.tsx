@@ -1,4 +1,4 @@
-import { LoginPortal } from '../components/auth/LoginPortal'
+import { LoginPortal } from '../components/global/auth/LoginPortal'
 
 type StaffRouteProps = {
   onSwitch: (portal: 'requester' | 'staff') => void

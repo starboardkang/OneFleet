@@ -1,13 +1,13 @@
 import { useState } from 'react'
-import StaffPortal from '../components/staff/StaffPortal'
-import { type RequesterProfile } from '../components/requester/RequesterProfileModal'
+import StaffPortalScreen from '../components/staff/portal/StaffPortalScreen'
+import { type Profile } from '../components/global/profile/types'
 
 type StaffPortalRouteProps = {
   onLogout: () => void
 }
 
 export default function StaffPortalRoute({ onLogout }: StaffPortalRouteProps) {
-  const [profile, setProfile] = useState<RequesterProfile>({
+  const [profile, setProfile] = useState<Profile>({
     fullName: 'Juan Dela Cruz',
     office: 'Officer Administrator',
     email: 'staff@onefleet.local',
@@ -18,7 +18,7 @@ export default function StaffPortalRoute({ onLogout }: StaffPortalRouteProps) {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
 
   return (
-    <StaffPortal
+    <StaffPortalScreen
       onLogout={onLogout}
       profile={profile}
       avatarUrl={avatarUrl}

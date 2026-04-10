@@ -1,13 +1,13 @@
-import { RequesterPortal } from '../components/requester/RequesterPortal'
+import { RequesterPortal } from '../components/requester/portal/RequesterPortal'
 import { useState } from 'react'
-import { type RequesterProfile } from '../components/requester/RequesterProfileModal'
+import { type Profile } from '../components/global/profile/types'
 
 type RequesterPortalRouteProps = {
   onLogout: () => void
 }
 
 export default function RequesterPortalRoute({ onLogout }: RequesterPortalRouteProps) {
-  const [profile, setProfile] = useState<RequesterProfile>({
+  const [profile, setProfile] = useState<Profile>({
     fullName: 'Vico Sotto',
     office: 'Office of the Mayor',
     email: 'requester@onefleet.local',

@@ -1,9 +1,0 @@
-.root{position:relative;display:inline-grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.25rem;overflow:hidden;border-radius:999px;background:rgba(255,255,255,.75);padding:.375rem;box-shadow:0 12px 28px rgba(15,23,42,.14);backdrop-filter:blur(24px);transition:all var(--app-motion-duration) var(--app-motion-ease)}
-.thumb{position:absolute;left:6px;top:6px;bottom:6px;width:calc((100% - 12px)/2);pointer-events:none;border-radius:999px;background:#0f172a;box-shadow:0 8px 18px rgba(15,23,42,.2);transition:transform var(--app-motion-duration) var(--app-motion-ease);will-change:transform}
-.thumbRequester{transform:translate3d(0,0,0)}
-.thumbStaff{transform:translate3d(100%,0,0)}
-.option{position:relative;z-index:10;min-width:74px;border:none;border-radius:999px;background:transparent;padding:.375rem .75rem;font-size:11px;font-weight:700;letter-spacing:.08em;transition:color var(--app-motion-duration) var(--app-motion-ease),transform var(--app-motion-duration) var(--app-motion-ease)}
-.optionActive{color:#fff}
-.optionInactive{color:#172554}
-.optionInactive:hover{transform:translateY(-2px)}
-@media (min-width:768px){.option{min-width:80px;padding:.5rem .875rem;font-size:.75rem}}

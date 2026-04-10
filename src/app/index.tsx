@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { LoginPortal } from '../components/auth/LoginPortal'
+import { LoginPortal } from '../components/global/auth/LoginPortal'
 import RequesterPortalRoute from './requester-portal'
 import StaffPortalRoute from './staff-portal'
 

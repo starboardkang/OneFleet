@@ -49,7 +49,6 @@ export function useLoginForm({
 
       setError('')
       setSuccess(`${portalLabel} login successful.`)
-      console.log(`${portalLabel} login attempt`, { email, password })
       onSuccess?.()
     },
     [credentials.email, credentials.password, email, onSuccess, password, portalLabel],
