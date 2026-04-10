@@ -2,10 +2,13 @@ import { useMemo, useState } from 'react'
 import ProfileModal from '../../global/profile/ProfileModal'
 import type { Profile } from '../../global/profile/types'
 import RequestFormCreate from '../../global/transport/RequestFormCreate'
+import RemarksHistoryModal from '../../global/transport/RemarksHistoryModal'
 import TripDetailsModal from '../../global/transport/TripDetailsModal'
 import type { RequestFormValues } from '../../global/transport/types'
 import DispatchRequestModal from '../transport/DispatchRequestModal'
+import RequestReviewModal from '../transport/RequestReviewModal'
 import StaffTransportContent from '../transport/StaffTransportContent'
+import VehicleOccupancyCalendarModal from '../transport/VehicleOccupancyCalendarModal'
 import StaffHeader from './StaffHeader'
 import StaffSidebar from './StaffSidebar'
 import {
@@ -13,6 +16,7 @@ import {
   roleOptions,
   staffSections,
   transportRequests,
+  vehicleOccupancyEntries,
   vehicleCatalog,
 } from './data'
 import styles from '../../../styles/modules/staff/portal/StaffPortal.module.css'
@@ -23,7 +27,7 @@ import type {
   StaffRequestItem,
   TransportTab,
 } from './types'
-import { buildStaffRequestFromForm, mapStaffRequestToTripDetails } from './utils'
+import { buildStaffRequestFromForm, createRemarkEntry, mapStaffRequestToTripDetails } from './utils'
 
 type StaffPortalScreenProps = {
   onLogout: () => void
@@ -38,7 +42,7 @@ export default function StaffPortalScreen({
   avatarUrl,
   onSaveProfile,
 }: StaffPortalScreenProps) {
-  const [isSidebarHovered, setIsSidebarHovered] = useState(false)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isRoleMenuOpen, setIsRoleMenuOpen] = useState(false)
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
@@ -48,7 +52,12 @@ export default function StaffPortalScreen({
   const [activeTransportTab, setActiveTransportTab] = useState<TransportTab>('all')
   const [requestListView, setRequestListView] = useState<RequestListView>('active')
   const [selectedRequest, setSelectedRequest] = useState<StaffRequestItem | null>(null)
+  const [remarksRequest, setRemarksRequest] = useState<StaffRequestItem | null>(null)
   const [requests, setRequests] = useState<StaffRequestItem[]>(transportRequests)
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false)
+  const [reviewRequest, setReviewRequest] = useState<StaffRequestItem | null>(null)
+  const [reviewMode, setReviewMode] = useState<'accept' | 'reject'>('accept')
+  const [reviewRemarks, setReviewRemarks] = useState('')
   const [approvalRequests, setApprovalRequests] = useState<ApprovalDispatchItem[]>([])
   const [dispatchSourceRequest, setDispatchSourceRequest] = useState<StaffRequestItem | null>(null)
   const [isDispatchModalOpen, setIsDispatchModalOpen] = useState(false)
@@ -86,12 +95,38 @@ export default function StaffPortalScreen({
   const requestCounts = {
     total: requests.length,
     approved: requests.filter((request) => request.status === 'Approved').length,
+    ongoing: requests.filter((request) => request.status === 'Ongoing').length,
+    completed: requests.filter((request) => request.status === 'Completed').length,
     processing: requests.filter((request) => request.status === 'Processing').length,
     denied: requests.filter((request) => request.status === 'Denied').length,
   }
   const visibleAllRequests = requests.filter((request) => request.view === requestListView)
-  const dispatchRequests = requests.filter((request) => request.status === 'Processing')
+  const dispatchRequests = requests.filter((request) => request.dispatchQueued)
   const unreservedVehicles = vehicleCatalog.filter((vehicle) => !vehicle.reserved)
+
+  const syncRequestOverlays = (nextRequest: StaffRequestItem) => {
+    if (selectedRequest?.id === nextRequest.id) {
+      setSelectedRequest(nextRequest)
+    }
+
+    if (remarksRequest?.id === nextRequest.id) {
+      setRemarksRequest(nextRequest)
+    }
+  }
+
+  const updateRequest = (requestId: string, updater: (request: StaffRequestItem) => StaffRequestItem) => {
+    setRequests((current) =>
+      current.map((request) => {
+        if (request.id !== requestId) {
+          return request
+        }
+
+        const nextRequest = updater(request)
+        syncRequestOverlays(nextRequest)
+        return nextRequest
+      }),
+    )
+  }
 
   const applyDispatchFieldChange = (field: keyof DispatchFormState, value: string) => {
     if (field === 'drn') {
@@ -187,6 +222,49 @@ export default function StaffPortalScreen({
     setIsCreateOpen(false)
   }
 
+  const handleOpenReview = (request: StaffRequestItem, mode: 'accept' | 'reject') => {
+    setReviewRequest(request)
+    setReviewMode(mode)
+    setReviewRemarks('')
+  }
+
+  const handleConfirmReview = () => {
+    if (!reviewRequest) {
+      return
+    }
+
+    const nowIso = new Date().toISOString()
+    const nextMessage =
+      reviewMode === 'accept'
+        ? reviewRemarks.trim() || 'Request accepted and moved to dispatch for scheduling.'
+        : reviewRemarks.trim()
+
+    updateRequest(reviewRequest.id, (request) => {
+      const nextRemark = createRemarkEntry(
+        request.id,
+        request.remarksHistory.length + 1,
+        profile.fullName,
+        nextMessage,
+        nowIso,
+      )
+
+      return {
+        ...request,
+        status: reviewMode === 'accept' ? 'Approved' : 'Denied',
+        dispatchQueued: reviewMode === 'accept',
+        remarks: nextMessage,
+        remarksHistory: [...request.remarksHistory, nextRemark],
+      }
+    })
+
+    if (reviewMode === 'accept') {
+      setActiveTransportTab('dispatch')
+    }
+
+    setReviewRequest(null)
+    setReviewRemarks('')
+  }
+
   const handleSubmitDispatch = () => {
     if (
       dispatchForm.drn.trim().length === 0 ||
@@ -247,15 +325,14 @@ export default function StaffPortalScreen({
 
       <div className={styles.layout}>
         <StaffSidebar
-          isSidebarHovered={isSidebarHovered}
+          isSidebarOpen={isSidebarOpen}
           activeItem={activeItem}
           sections={staffSections}
-          onMouseEnter={() => setIsSidebarHovered(true)}
-          onMouseLeave={() => setIsSidebarHovered(false)}
+          onToggleSidebar={() => setIsSidebarOpen((current) => !current)}
           onSelectItem={setActiveItem}
         />
 
-        <main className={styles.main} style={{ marginLeft: isSidebarHovered ? '304px' : '88px' }}>
+        <main className={styles.main} style={{ marginLeft: isSidebarOpen ? '304px' : '88px' }}>
           {activeItem === 'Transport Request' ? (
             <StaffTransportContent
               today={today}
@@ -269,6 +346,10 @@ export default function StaffPortalScreen({
               onChangeRequestListView={setRequestListView}
               onOpenCreate={() => setIsCreateOpen(true)}
               onOpenDetails={setSelectedRequest}
+              onOpenRemarks={setRemarksRequest}
+              onOpenCalendar={() => setIsCalendarOpen(true)}
+              onAcceptRequest={(request) => handleOpenReview(request, 'accept')}
+              onRejectRequest={(request) => handleOpenReview(request, 'reject')}
               onOpenDispatchModal={openDispatchModal}
             />
           ) : (
@@ -325,7 +406,56 @@ export default function StaffPortalScreen({
         <TripDetailsModal
           request={mapStaffRequestToTripDetails(selectedRequest)}
           onClose={() => setSelectedRequest(null)}
+          onOpenRemarks={() => setRemarksRequest(selectedRequest)}
           onEdit={() => setSelectedRequest(null)}
+        />
+      ) : null}
+
+      {remarksRequest ? (
+        <RemarksHistoryModal
+          requestId={remarksRequest.id}
+          remarksHistory={remarksRequest.remarksHistory}
+          onSaveEditRemark={(remarkId, nextMessage) => {
+            updateRequest(remarksRequest.id, (request) => ({
+              ...request,
+              remarks:
+                request.remarksHistory[request.remarksHistory.length - 1]?.id === remarkId
+                  ? nextMessage
+                  : request.remarks,
+              remarksHistory: request.remarksHistory.map((entry) =>
+                entry.id === remarkId
+                  ? {
+                      ...entry,
+                      message: nextMessage,
+                      updatedAt: new Date().toISOString(),
+                    }
+                  : entry,
+              ),
+            }))
+          }}
+          onClose={() => setRemarksRequest(null)}
+        />
+      ) : null}
+
+      {isCalendarOpen ? (
+        <VehicleOccupancyCalendarModal
+          vehicles={vehicleCatalog}
+          occupancies={vehicleOccupancyEntries}
+          onClose={() => setIsCalendarOpen(false)}
+        />
+      ) : null}
+
+      {reviewRequest ? (
+        <RequestReviewModal
+          mode={reviewMode}
+          requestId={reviewRequest.id}
+          remarks={reviewRemarks}
+          onChangeRemarks={setReviewRemarks}
+          onClose={() => {
+            setReviewRequest(null)
+            setReviewRemarks('')
+          }}
+          onConfirm={handleConfirmReview}
         />
       ) : null}
 

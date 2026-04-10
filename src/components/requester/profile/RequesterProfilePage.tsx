@@ -1,4 +1,4 @@
-import heroLogo from '../../../assets/hero-logo.png'
+import heroLogo from '../../../../assets/hero-logo.png'
 import styles from '../../../styles/modules/requester/profile/RequesterProfilePage.module.css'
 
 type RequesterProfilePageProps = {

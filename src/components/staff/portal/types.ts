@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import type { RequestFormValues } from '../../global/transport/types'
+import type { RemarkHistoryEntry, RequestFormValues } from '../../global/transport/types'
 
 export type StaffSection = {
   title: string
@@ -9,7 +9,7 @@ export type StaffSection = {
   }>
 }
 
-export type StaffRequestStatus = 'Approved' | 'Denied' | 'Processing'
+export type StaffRequestStatus = 'Approved' | 'Ongoing' | 'Completed' | 'Denied' | 'Processing'
 export type TransportTab = 'all' | 'dispatch' | 'approval'
 export type RequestListView = 'active' | 'past'
 
@@ -30,6 +30,7 @@ export type StaffRequestItem = {
   id: string
   requestedOn: string
   requestType: RequestFormValues['requestType']
+  createdByStaffName?: string
   requester: string
   requesterPhone: string
   passengerNames: string[]
@@ -45,8 +46,18 @@ export type StaffRequestItem = {
   destination: string
   neededAt: string
   status: StaffRequestStatus
+  dispatchQueued?: boolean
   view: RequestListView
   remarks: string
+  remarksHistory: RemarkHistoryEntry[]
+}
+
+export type VehicleOccupancyEntry = {
+  id: string
+  vehicleId: string
+  requestId: string
+  startDate: string
+  endDate: string
 }
 
 export type ApprovalDispatchItem = {

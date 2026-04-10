@@ -1,11 +1,17 @@
 import { useMemo, useState } from 'react'
-import heroLogo from '../../../assets/hero-logo.png'
+import heroLogo from '../../../../assets/hero-logo.png'
 import Group71 from './Group71'
 import ProfileModal from '../../global/profile/ProfileModal'
 import type { Profile } from '../../global/profile/types'
 import RequestFormCreate from '../../global/transport/RequestFormCreate'
 import RequestFormEdit from '../../global/transport/RequestFormEdit'
-import type { RequestFormValues, RequestItem, RequestStatus } from '../../global/transport/types'
+import type {
+  RemarkHistoryEntry,
+  RequestFormValues,
+  RequestItem,
+  RequestStatus,
+} from '../../global/transport/types'
+import RemarksHistoryModal from '../../global/transport/RemarksHistoryModal'
 import TripDetailsModal from '../../global/transport/TripDetailsModal'
 import DeleteRequestModal from '../modals/DeleteRequestModal'
 import RequestCard from '../requests/RequestCard'
@@ -23,8 +29,18 @@ type RequesterPortalProps = {
 const overview = [
   { label: 'Total', tone: styles.statNeutral },
   { label: 'Approved', tone: styles.statApproved },
+  { label: 'Ongoing', tone: styles.statOngoing },
+  { label: 'Completed', tone: styles.statCompleted },
   { label: 'Processing', tone: styles.statProcessing },
   { label: 'Denied', tone: styles.statDenied },
+] as const
+
+const statusGuide = [
+  { label: 'Approved', description: 'The request has been approved and is waiting for its assigned trip schedule.' },
+  { label: 'Ongoing', description: 'The assigned vehicle and driver are currently servicing the trip.' },
+  { label: 'Completed', description: 'The trip finished successfully and the request is now closed.' },
+  { label: 'Denied', description: 'The request was not approved and needs corrections or resubmission.' },
+  { label: 'Processing', description: 'The request is still under review by the dispatch office.' },
 ] as const
 
 const initialRequests: RequestItem[] = [
@@ -33,7 +49,7 @@ const initialRequests: RequestItem[] = [
     tripType: 'Driver and Vehicle',
     requestedAt: 'Requested: April 2, 2026',
     requestedOn: '2026-04-02',
-    status: 'Approved',
+    status: 'Ongoing',
     passengerNames: ['Vico Sotto'],
     purpose: 'Official city engagement',
     street: 'Kapitolyo',
@@ -49,6 +65,17 @@ const initialRequests: RequestItem[] = [
     schedule: 'April 6, 2026 - 1:00 PM',
     remarks:
       'Driver and vehicle request has been approved. Please arrive at the designated pick up location on time.',
+    remarksHistory: [
+      {
+        id: 'RVDSS-001-1',
+        author: 'Dispatch Office',
+        date: 'April 2, 2026',
+        createdAt: '2026-04-02T08:15:00+08:00',
+        message:
+          'Driver and vehicle request has been approved. Please arrive at the designated pick up location on time.',
+        viewedByRequester: false,
+      },
+    ],
   },
   {
     id: 'RVDSS - 002',
@@ -70,6 +97,16 @@ const initialRequests: RequestItem[] = [
     destination: 'Pasig City Hall Annex',
     schedule: 'April 8, 2026 - 9:00 AM',
     remarks: 'Your request is currently being reviewed by the dispatch office.',
+    remarksHistory: [
+      {
+        id: 'RVDSS-002-1',
+        author: 'Dispatch Office',
+        date: 'April 1, 2026',
+        createdAt: '2026-04-01T11:00:00+08:00',
+        message: 'Your request is currently being reviewed by the dispatch office.',
+        viewedByRequester: false,
+      },
+    ],
   },
   {
     id: 'RVDSS - 003',
@@ -91,13 +128,24 @@ const initialRequests: RequestItem[] = [
     destination: 'Kapitolyo',
     schedule: 'April 9, 2026 - 3:30 PM',
     remarks: 'The requested vehicle was unavailable for the selected schedule. Please resubmit with a new time slot.',
+    remarksHistory: [
+      {
+        id: 'RVDSS-003-1',
+        author: 'Dispatch Office',
+        date: 'March 30, 2026',
+        createdAt: '2026-03-30T14:30:00+08:00',
+        message:
+          'The requested vehicle was unavailable for the selected schedule. Please resubmit with a new time slot.',
+        viewedByRequester: false,
+      },
+    ],
   },
   {
     id: 'RVDSS - 004',
     tripType: 'Driver and Vehicle',
     requestedAt: 'Requested: March 18, 2026',
     requestedOn: '2026-03-18',
-    status: 'Approved',
+    status: 'Completed',
     passengerNames: ['Maria Santos'],
     purpose: 'Completed field visit',
     street: 'Capitol Commons',
@@ -112,6 +160,16 @@ const initialRequests: RequestItem[] = [
     destination: 'Capitol Commons',
     schedule: 'March 28, 2026 - 10:30 AM',
     remarks: 'Request completed successfully.',
+    remarksHistory: [
+      {
+        id: 'RVDSS-004-1',
+        author: 'Dispatch Office',
+        date: 'March 18, 2026',
+        createdAt: '2026-03-18T16:10:00+08:00',
+        message: 'Request completed successfully.',
+        viewedByRequester: true,
+      },
+    ],
   },
   {
     id: 'RVDSS - 005',
@@ -133,6 +191,16 @@ const initialRequests: RequestItem[] = [
     destination: 'Pasig Mega Market',
     schedule: 'March 29, 2026 - 8:00 AM',
     remarks: 'The trip request was denied due to incomplete trip justification.',
+    remarksHistory: [
+      {
+        id: 'RVDSS-005-1',
+        author: 'Dispatch Office',
+        date: 'March 17, 2026',
+        createdAt: '2026-03-17T08:40:00+08:00',
+        message: 'The trip request was denied due to incomplete trip justification.',
+        viewedByRequester: true,
+      },
+    ],
   },
 ]
 
@@ -181,7 +249,9 @@ function buildRequestFromForm(
   requestedOn: string,
   status: RequestStatus,
   remarks: string,
+  remarksHistory?: RemarkHistoryEntry[],
 ): RequestItem {
+  const isApprovedLike = status === 'Approved' || status === 'Ongoing' || status === 'Completed'
   return {
     id,
     tripType:
@@ -205,12 +275,24 @@ function buildRequestFromForm(
     dateFrom: values.dateFrom,
     dateTo: values.dateTo,
     timeNeeded: values.timeNeeded,
-    driver: status === 'Approved' ? 'Juan Luna' : status === 'Processing' ? 'Pending assignment' : '--',
-    vehicle: status === 'Approved' ? 'SAB - 2132 - Toyota Avanza' : status === 'Processing' ? 'To be assigned' : '--',
-    plateNumber: status === 'Approved' ? 'SAB - 2132' : status === 'Processing' ? 'Pending assignment' : '--',
+    driver: isApprovedLike ? 'Juan Luna' : status === 'Processing' ? 'Pending assignment' : '--',
+    vehicle: isApprovedLike ? 'SAB - 2132 - Toyota Avanza' : status === 'Processing' ? 'To be assigned' : '--',
+    plateNumber: isApprovedLike ? 'SAB - 2132' : status === 'Processing' ? 'Pending assignment' : '--',
     destination: values.street,
     schedule: formatScheduleRange(values.dateFrom, values.dateTo, values.timeNeeded),
     remarks,
+    remarksHistory:
+      remarksHistory ??
+      [
+        {
+          id: `${id.replace(/\s+/g, '')}-1`,
+          author: 'Dispatch Office',
+          date: formatLongDate(requestedOn),
+          createdAt: `${requestedOn}T08:00:00+08:00`,
+          message: remarks,
+          viewedByRequester: false,
+        },
+      ],
   }
 }
 
@@ -221,7 +303,7 @@ function getRequestAgeInDays(requestedOn: string) {
 
 function getRequestPermissions(request: RequestItem, isPast: boolean) {
   if (!isPast) {
-    if (request.status === 'Approved') {
+    if (request.status === 'Approved' || request.status === 'Ongoing') {
       return { canEdit: false, canDelete: false, canResubmit: false }
     }
 
@@ -232,7 +314,7 @@ function getRequestPermissions(request: RequestItem, isPast: boolean) {
     return { canEdit: true, canDelete: true, canResubmit: true }
   }
 
-  if (request.status === 'Approved') {
+  if (request.status === 'Approved' || request.status === 'Completed' || request.status === 'Ongoing') {
     return { canEdit: false, canDelete: false, canResubmit: false }
   }
 
@@ -253,10 +335,55 @@ export function RequesterPortal({
   const [requestView, setRequestView] = useState<RequestView>('active')
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
   const [selectedRequest, setSelectedRequest] = useState<RequestItem | null>(null)
+  const [remarksRequest, setRemarksRequest] = useState<RequestItem | null>(null)
   const [requestPendingDelete, setRequestPendingDelete] = useState<RequestItem | null>(null)
   const [requests, setRequests] = useState<RequestItem[]>(initialRequests)
   const [editingRequestId, setEditingRequestId] = useState<string | null>(null)
   const [isCreateOpen, setIsCreateOpen] = useState(false)
+
+  const syncRequestOverlays = (nextRequest: RequestItem) => {
+    if (selectedRequest?.id === nextRequest.id) {
+      setSelectedRequest(nextRequest)
+    }
+
+    if (remarksRequest?.id === nextRequest.id) {
+      setRemarksRequest(nextRequest)
+    }
+  }
+
+  const updateRequest = (requestId: string, updater: (request: RequestItem) => RequestItem) => {
+    setRequests((current) =>
+      current.map((request) => {
+        if (request.id !== requestId) {
+          return request
+        }
+
+        const nextRequest = updater(request)
+        syncRequestOverlays(nextRequest)
+        return nextRequest
+      }),
+    )
+  }
+
+  const handleOpenRemarks = (request: RequestItem) => {
+    const nextRequest = {
+      ...request,
+      remarksHistory: request.remarksHistory.map((entry) => ({
+        ...entry,
+        viewedByRequester: true,
+      })),
+    }
+
+    setRequests((current) =>
+      current.map((currentRequest) => (currentRequest.id === request.id ? nextRequest : currentRequest)),
+    )
+
+    if (selectedRequest?.id === request.id) {
+      setSelectedRequest(nextRequest)
+    }
+
+    setRemarksRequest(nextRequest)
+  }
 
   const activeRequestItems = useMemo(
     () => requests.filter((request) => getRequestAgeInDays(request.requestedOn) < 10),
@@ -273,6 +400,8 @@ export function RequesterPortal({
   const summaryCounts = {
     Total: visibleRequests.length,
     Approved: visibleRequests.filter((request) => request.status === 'Approved').length,
+    Ongoing: visibleRequests.filter((request) => request.status === 'Ongoing').length,
+    Completed: visibleRequests.filter((request) => request.status === 'Completed').length,
     Processing: visibleRequests.filter((request) => request.status === 'Processing').length,
     Denied: visibleRequests.filter((request) => request.status === 'Denied').length,
   }
@@ -379,7 +508,21 @@ export function RequesterPortal({
 
           <div className={styles.overviewSummaryRow}>
             <div className={styles.requestTabs}>
-              <Group71 activeView={requestView} onChange={setRequestView} />
+              <div className={styles.requestTabsPanel}>
+                <Group71 activeView={requestView} onChange={setRequestView} />
+
+                <div className={styles.statusGuide}>
+                  <div className={styles.statusGuideTitle}>Status Guide</div>
+                  <div className={styles.statusGuideList}>
+                    {statusGuide.map((item) => (
+                      <div key={item.label} className={styles.statusGuideItem}>
+                        <div className={styles.statusGuideLabel}>{item.label}</div>
+                        <div className={styles.statusGuideText}>{item.description}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div className={styles.statsGrid}>
@@ -430,6 +573,7 @@ export function RequesterPortal({
                   canDelete={permissions.canDelete}
                   canResubmit={permissions.canResubmit}
                   onEdit={() => setEditingRequestId(request.id)}
+                  onOpenRemarks={() => handleOpenRemarks(request)}
                   onOpenDetails={() => setSelectedRequest(request)}
                   onDelete={() => setRequestPendingDelete(request)}
                   onResubmit={() => {
@@ -461,6 +605,18 @@ export function RequesterPortal({
                               '2026-04-04',
                               'Processing',
                               'Your resubmitted request is currently being reviewed by the dispatch office.',
+                              [
+                                ...request.remarksHistory,
+                                {
+                                  id: `${request.id.replace(/\s+/g, '')}-${request.remarksHistory.length + 1}`,
+                                  author: 'Dispatch Office',
+                                  date: 'April 4, 2026',
+                                  createdAt: '2026-04-04T09:15:00+08:00',
+                                  message:
+                                    'Your resubmitted request is currently being reviewed by the dispatch office.',
+                                  viewedByRequester: false,
+                                },
+                              ],
                             )
                           : currentRequest,
                       ),
@@ -531,6 +687,7 @@ export function RequesterPortal({
                         request.requestedOn,
                         request.status,
                         request.remarks,
+                        request.remarksHistory,
                       ),
                       requestedAt: request.requestedAt,
                     }
@@ -555,6 +712,7 @@ export function RequesterPortal({
         <TripDetailsModal
           request={selectedRequest}
           onClose={() => setSelectedRequest(null)}
+          onOpenRemarks={() => handleOpenRemarks(selectedRequest)}
           onEdit={() => {
             setSelectedRequest(null)
             const permissions = getRequestPermissions(selectedRequest, getRequestAgeInDays(selectedRequest.requestedOn) >= 10)
@@ -562,6 +720,14 @@ export function RequesterPortal({
               setEditingRequestId(selectedRequest.id)
             }
           }}
+        />
+      ) : null}
+
+      {remarksRequest ? (
+        <RemarksHistoryModal
+          requestId={remarksRequest.id}
+          remarksHistory={remarksRequest.remarksHistory}
+          onClose={() => setRemarksRequest(null)}
         />
       ) : null}
 

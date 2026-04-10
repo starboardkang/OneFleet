@@ -7,6 +7,7 @@ type RequestTripDetailsModalProps = {
   request: RequestItem
   onClose: () => void
   onEdit: () => void
+  onOpenRemarks: () => void
 }
 
 function formatLongDate(value: string) {
@@ -46,6 +47,7 @@ export default function RequestTripDetailsModal({
   request,
   onClose,
   onEdit,
+  onOpenRemarks,
 }: RequestTripDetailsModalProps) {
   useBodyScrollLock()
 
@@ -107,10 +109,9 @@ export default function RequestTripDetailsModal({
           </div>
 
           <div className={styles.tripRemarksRow}>
-            <div className={styles.tripRemarks}>
-              <span className={styles.remarksLabel}>Remarks: </span>
-              {request.remarks}
-            </div>
+            <button type="button" className={styles.profileSecondaryButton} onClick={onOpenRemarks}>
+              Remarks
+            </button>
             <button type="button" className={styles.tripEditButton} onClick={onEdit}>
               Edit
             </button>

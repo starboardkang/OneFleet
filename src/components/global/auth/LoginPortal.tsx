@@ -1,5 +1,5 @@
-import officeBackground from '../../../assets/ogs-office.png'
-import loginLogo from '../../../assets/pasig-login-logo.png'
+import officeBackground from '../../../../assets/ogs-office.png'
+import loginLogo from '../../../../assets/pasig-login-logo.png'
 import { useState } from 'react'
 import { useLoginForm } from '../../../hooks/useLoginForm'
 import styles from '../../../styles/modules/global/auth/LoginPortal.module.css'

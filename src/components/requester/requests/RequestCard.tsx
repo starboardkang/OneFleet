@@ -7,6 +7,7 @@ type RequestCardProps = {
   canDelete: boolean
   canResubmit: boolean
   onEdit: () => void
+  onOpenRemarks: () => void
   onOpenDetails: () => void
   onDelete: () => void
   onResubmit: () => void
@@ -16,6 +17,10 @@ function statusClasses(status: RequestStatus) {
   switch (status) {
     case 'Approved':
       return styles.statusApproved
+    case 'Ongoing':
+      return styles.statusOngoing
+    case 'Completed':
+      return styles.statusCompleted
     case 'Processing':
       return styles.statusProcessing
     case 'Denied':
@@ -47,10 +52,13 @@ export default function RequestCard({
   canDelete,
   canResubmit,
   onEdit,
+  onOpenRemarks,
   onOpenDetails,
   onDelete,
   onResubmit,
 }: RequestCardProps) {
+  const hasUnreadRemarks = request.remarksHistory.some((entry) => !entry.viewedByRequester)
+
   return (
     <article className={styles.requestCard}>
       <div className={styles.requestCardHeader}>
@@ -84,11 +92,6 @@ export default function RequestCard({
       </div>
 
       <div className={styles.requestFooter}>
-        <div className={styles.remarks}>
-          <span className={styles.remarksLabel}>Remarks: </span>
-          {request.remarks}
-        </div>
-
         <div className={styles.actionRow}>
           {canResubmit ? (
             <button type="button" className={styles.actionResubmit} onClick={onResubmit}>
@@ -110,6 +113,10 @@ export default function RequestCard({
             disabled={!canDelete}
           >
             Delete
+          </button>
+          <button type="button" className={styles.remarkButton} onClick={onOpenRemarks}>
+            Remarks
+            {hasUnreadRemarks ? <span className={styles.remarkUnreadDot} aria-hidden="true" /> : null}
           </button>
           <button type="button" className={styles.actionDetails} onClick={onOpenDetails}>
             More Details

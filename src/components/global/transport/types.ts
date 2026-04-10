@@ -17,7 +17,17 @@ export type RequestFormValues = {
   timeNeeded: string
 }
 
-export type RequestStatus = 'Approved' | 'Processing' | 'Denied'
+export type RequestStatus = 'Approved' | 'Ongoing' | 'Completed' | 'Denied' | 'Processing'
+
+export type RemarkHistoryEntry = {
+  id: string
+  author: string
+  date: string
+  message: string
+  createdAt: string
+  updatedAt?: string
+  viewedByRequester?: boolean
+}
 
 export type RequestItem = {
   id: string
@@ -39,4 +49,5 @@ export type RequestItem = {
   destination: string
   schedule: string
   remarks: string
+  remarksHistory: RemarkHistoryEntry[]
 }

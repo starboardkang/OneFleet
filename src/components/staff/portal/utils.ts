@@ -1,4 +1,4 @@
-import type { RequestFormValues, RequestItem } from '../../global/transport/types'
+import type { RemarkHistoryEntry, RequestFormValues, RequestItem } from '../../global/transport/types'
 import type { StaffRequestItem } from './types'
 
 export function formatLongDate(dateValue: string) {
@@ -11,6 +11,24 @@ export function formatLongDate(dateValue: string) {
 
 export function formatDateRange(dateFrom: string, dateTo: string) {
   return dateFrom === dateTo ? dateFrom : `${dateFrom} to ${dateTo}`
+}
+
+export function createRemarkEntry(
+  idPrefix: string,
+  index: number,
+  author: string,
+  message: string,
+  createdAt: string,
+  viewedByRequester = false,
+): RemarkHistoryEntry {
+  return {
+    id: `${idPrefix.replace(/\s+/g, '')}-${index}`,
+    author,
+    date: formatLongDate(createdAt.slice(0, 10)),
+    message,
+    createdAt,
+    viewedByRequester,
+  }
 }
 
 export function buildStaffRequestFromForm(
@@ -49,8 +67,18 @@ export function buildStaffRequestFromForm(
     destination: values.street,
     neededAt: `${formatDateRange(formatLongDate(values.dateFrom), formatLongDate(values.dateTo))} - ${values.timeNeeded} PST`,
     status: 'Processing',
+    dispatchQueued: false,
     view: 'active',
     remarks: `Your ${requestTypeLabel.toLowerCase()} request has been submitted and is currently being reviewed by the dispatch office.`,
+    remarksHistory: [
+      createRemarkEntry(
+        id,
+        1,
+        'Dispatch Office',
+        `Your ${requestTypeLabel.toLowerCase()} request has been submitted and is currently being reviewed by the dispatch office.`,
+        `${requestedOn}T08:00:00+08:00`,
+      ),
+    ],
   }
 }
 
@@ -71,7 +99,7 @@ export function mapStaffRequestToTripDetails(request: StaffRequestItem): Request
     tripType,
     requestedAt: `Requested: ${request.requestedOn}`,
     requestedOn: request.requestedOn,
-    status: request.status === 'Approved' || request.status === 'Denied' ? request.status : 'Processing',
+    status: request.status,
     passengerNames: request.passengerNames,
     purpose: request.purpose,
     street: request.street,
@@ -86,5 +114,6 @@ export function mapStaffRequestToTripDetails(request: StaffRequestItem): Request
     destination: request.destination,
     schedule: request.neededAt,
     remarks: request.remarks,
+    remarksHistory: request.remarksHistory,
   }
 }

@@ -15,6 +15,8 @@ type StaffTransportContentProps = {
   requestCounts: {
     total: number
     approved: number
+    ongoing: number
+    completed: number
     processing: number
     denied: number
   }
@@ -25,6 +27,10 @@ type StaffTransportContentProps = {
   onChangeRequestListView: (view: RequestListView) => void
   onOpenCreate: () => void
   onOpenDetails: (request: StaffRequestItem) => void
+  onOpenRemarks: (request: StaffRequestItem) => void
+  onOpenCalendar: () => void
+  onAcceptRequest: (request: StaffRequestItem) => void
+  onRejectRequest: (request: StaffRequestItem) => void
   onOpenDispatchModal: (request?: StaffRequestItem | null) => void
 }
 
@@ -40,6 +46,10 @@ export default function StaffTransportContent({
   onChangeRequestListView,
   onOpenCreate,
   onOpenDetails,
+  onOpenRemarks,
+  onOpenCalendar,
+  onAcceptRequest,
+  onRejectRequest,
   onOpenDispatchModal,
 }: StaffTransportContentProps) {
   return (
@@ -67,6 +77,9 @@ export default function StaffTransportContent({
             </label>
             <button type="button" className={styles.createRequestButton} onClick={onOpenCreate}>
               + Create Request
+            </button>
+            <button type="button" className={styles.calendarButton} onClick={onOpenCalendar}>
+              Vehicle Calendar
             </button>
           </div>
         </div>
@@ -125,6 +138,14 @@ export default function StaffTransportContent({
                 <span className={styles.transportStatLabel}>Approved</span>
                 <strong className={styles.transportStatValue}>{requestCounts.approved}</strong>
               </article>
+              <article className={[styles.transportStatCard, styles.transportStatOngoing].join(' ')}>
+                <span className={styles.transportStatLabel}>Ongoing</span>
+                <strong className={styles.transportStatValue}>{requestCounts.ongoing}</strong>
+              </article>
+              <article className={[styles.transportStatCard, styles.transportStatCompleted].join(' ')}>
+                <span className={styles.transportStatLabel}>Completed</span>
+                <strong className={styles.transportStatValue}>{requestCounts.completed}</strong>
+              </article>
               <article className={[styles.transportStatCard, styles.transportStatProcessing].join(' ')}>
                 <span className={styles.transportStatLabel}>Processing</span>
                 <strong className={styles.transportStatValue}>{requestCounts.processing}</strong>
@@ -158,22 +179,29 @@ export default function StaffTransportContent({
                 <div className={styles.transportRequestTopRow}>
                   <div className={styles.transportRequestMeta}>
                     <span className={styles.transportRequestId}>{request.id}</span>
-                    <span className={styles.transportRequestTag}>Driver and Vehicle</span>
+                    <span className={styles.transportRequestTag}>{request.requestType}</span>
+                    {request.createdByStaffName ? (
+                      <span className={styles.transportRequestCreator}>
+                        Created by {request.createdByStaffName}
+                      </span>
+                    ) : null}
                     <span className={styles.transportRequestDate}>Requested: {request.requestedOn}</span>
                   </div>
                   <span
                     className={[
                       styles.transportStatusBadge,
-                      requestListView === 'past'
-                        ? styles.transportStatusCompleted
-                        : request.status === 'Approved'
-                          ? styles.transportStatusApproved
-                          : request.status === 'Denied'
-                            ? styles.transportStatusDenied
-                            : styles.transportStatusProcessing,
+                      request.status === 'Approved'
+                        ? styles.transportStatusApproved
+                        : request.status === 'Ongoing'
+                          ? styles.transportStatusOngoing
+                          : request.status === 'Completed'
+                            ? styles.transportStatusCompleted
+                            : request.status === 'Denied'
+                              ? styles.transportStatusDenied
+                              : styles.transportStatusProcessing,
                     ].join(' ')}
                   >
-                    {requestListView === 'past' ? 'COMPLETED' : request.status.toUpperCase()}
+                    {request.status.toUpperCase()}
                   </span>
                 </div>
 
@@ -198,17 +226,38 @@ export default function StaffTransportContent({
                 </div>
 
                 <div className={styles.transportRequestFooter}>
-                  <p className={styles.transportRemarks}>
-                    <span className={styles.transportRemarksLabel}>Remarks:</span>
-                    {request.remarks}
-                  </p>
-
                   <div className={styles.transportActions}>
                     <button type="button" className={styles.transportActionEdit}>
                       Edit
                     </button>
-                    <button type="button" className={styles.transportActionCancel}>
-                      Cancel
+                    <button
+                      type="button"
+                      className={[
+                        styles.transportActionAccept,
+                        request.status !== 'Processing' ? styles.transportActionDisabled : '',
+                      ].join(' ')}
+                      onClick={() => onAcceptRequest(request)}
+                      disabled={request.status !== 'Processing'}
+                    >
+                      Accept
+                    </button>
+                    <button
+                      type="button"
+                      className={[
+                        styles.transportActionReject,
+                        request.status !== 'Processing' ? styles.transportActionDisabled : '',
+                      ].join(' ')}
+                      onClick={() => onRejectRequest(request)}
+                      disabled={request.status !== 'Processing'}
+                    >
+                      Reject
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.transportActionEdit}
+                      onClick={() => onOpenRemarks(request)}
+                    >
+                      Remarks
                     </button>
                     <button
                       type="button"

@@ -2,32 +2,51 @@ import styles from '../../../styles/modules/staff/portal/StaffPortal.module.css'
 import type { StaffSection } from './types'
 
 type StaffSidebarProps = {
-  isSidebarHovered: boolean
+  isSidebarOpen: boolean
   activeItem: string
   sections: StaffSection[]
-  onMouseEnter: () => void
-  onMouseLeave: () => void
+  onToggleSidebar: () => void
   onSelectItem: (item: string) => void
 }
 
 export default function StaffSidebar({
-  isSidebarHovered,
+  isSidebarOpen,
   activeItem,
   sections,
-  onMouseEnter,
-  onMouseLeave,
+  onToggleSidebar,
   onSelectItem,
 }: StaffSidebarProps) {
   return (
     <aside
       className={[
         styles.sidebar,
-        isSidebarHovered ? styles.sidebarExpanded : styles.sidebarCollapsed,
+        isSidebarOpen ? styles.sidebarExpanded : styles.sidebarCollapsed,
       ].join(' ')}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
     >
       <div className={styles.sidebarGlow} aria-hidden="true" />
+      <div
+        className={[
+          styles.sidebarToggleRow,
+          isSidebarOpen ? styles.sidebarToggleRowOpen : styles.sidebarToggleRowClosed,
+        ].join(' ')}
+      >
+        <button
+          type="button"
+          className={styles.sidebarToggle}
+          onClick={onToggleSidebar}
+          aria-label={isSidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+          aria-expanded={isSidebarOpen}
+        >
+          <span
+            className={[
+              styles.sidebarToggleChevron,
+              isSidebarOpen ? styles.sidebarToggleChevronOpen : '',
+            ].join(' ')}
+          >
+            {'>'}
+          </span>
+        </button>
+      </div>
 
       <div className={styles.sidebarSections}>
         {sections.map((section) => (
@@ -35,7 +54,7 @@ export default function StaffSidebar({
             <div
               className={[
                 styles.sidebarSectionTitle,
-                isSidebarHovered
+                isSidebarOpen
                   ? styles.sidebarSectionTitleVisible
                   : styles.sidebarSectionTitleHidden,
               ].join(' ')}
@@ -54,7 +73,7 @@ export default function StaffSidebar({
                     className={[
                       styles.sidebarItem,
                       isActive ? styles.sidebarItemActive : '',
-                      isSidebarHovered
+                      isSidebarOpen
                         ? styles.sidebarItemExpanded
                         : styles.sidebarItemCollapsed,
                     ].join(' ')}
@@ -64,7 +83,7 @@ export default function StaffSidebar({
                     <span
                       className={[
                         styles.sidebarItemLabel,
-                        isSidebarHovered
+                        isSidebarOpen
                           ? styles.sidebarItemLabelVisible
                           : styles.sidebarItemLabelHidden,
                       ].join(' ')}
