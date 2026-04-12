@@ -333,6 +333,7 @@ export function RequesterPortal({
 }: RequesterPortalProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [requestView, setRequestView] = useState<RequestView>('active')
+  const [isStatusGuideOpen, setIsStatusGuideOpen] = useState(false)
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
   const [selectedRequest, setSelectedRequest] = useState<RequestItem | null>(null)
   const [remarksRequest, setRemarksRequest] = useState<RequestItem | null>(null)
@@ -511,17 +512,13 @@ export function RequesterPortal({
               <div className={styles.requestTabsPanel}>
                 <Group71 activeView={requestView} onChange={setRequestView} />
 
-                <div className={styles.statusGuide}>
-                  <div className={styles.statusGuideTitle}>Status Guide</div>
-                  <div className={styles.statusGuideList}>
-                    {statusGuide.map((item) => (
-                      <div key={item.label} className={styles.statusGuideItem}>
-                        <div className={styles.statusGuideLabel}>{item.label}</div>
-                        <div className={styles.statusGuideText}>{item.description}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                <button
+                  type="button"
+                  className={styles.statusGuideButton}
+                  onClick={() => setIsStatusGuideOpen(true)}
+                >
+                  View Status Guide
+                </button>
               </div>
             </div>
 
@@ -706,6 +703,35 @@ export function RequesterPortal({
           onClose={() => setIsProfileModalOpen(false)}
           onSave={onSaveProfile}
         />
+      ) : null}
+
+      {isStatusGuideOpen ? (
+        <div className={styles.modalOverlay} onClick={() => setIsStatusGuideOpen(false)}>
+          <div className={styles.statusGuideDialog} onClick={(event) => event.stopPropagation()}>
+            <div className={styles.statusGuideDialogHeader}>
+              <div>
+                <div className={styles.statusGuideDialogEyebrow}>Requester Help</div>
+                <h2 className={styles.statusGuideDialogTitle}>Status Guide</h2>
+              </div>
+              <button
+                type="button"
+                className={styles.statusGuideDialogClose}
+                onClick={() => setIsStatusGuideOpen(false)}
+              >
+                Close
+              </button>
+            </div>
+
+            <div className={styles.statusGuideList}>
+              {statusGuide.map((item) => (
+                <div key={item.label} className={styles.statusGuideItem}>
+                  <div className={styles.statusGuideLabel}>{item.label}</div>
+                  <div className={styles.statusGuideText}>{item.description}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       ) : null}
 
       {selectedRequest ? (

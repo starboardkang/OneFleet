@@ -11,10 +11,18 @@
 .statsGrid{grid-template-columns:repeat(3,minmax(0,1fr))}
 .requestTabs{display:flex}
 .requestTabsPanel{display:flex;flex:1;flex-direction:column;gap:1rem;border:1px solid #dbe4ee;border-radius:1rem;background:#f8fafc;padding:1rem}
+.statusGuideButton{border:1px solid #334155;border-radius:.85rem;background:#fff;padding:.8rem 1rem;font-size:.85rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#0f172a;transition:background-color var(--app-motion-duration) var(--app-motion-ease),color var(--app-motion-duration) var(--app-motion-ease),border-color var(--app-motion-duration) var(--app-motion-ease)}
+.statusGuideButton:hover{border-color:#0f172a;background:#0f172a;color:#fff}
 .statusGuide{display:flex;flex:1;flex-direction:column}
 .statusGuideTitle{font-size:.8rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#475569}
 .statusGuideList{display:flex;flex:1;flex-direction:column;gap:.75rem;margin-top:.85rem}
 .statusGuideItem{border:1px solid #e2e8f0;border-radius:.85rem;background:#fff;padding:.75rem .85rem}
 .statusGuideLabel{font-size:.82rem;font-weight:700;color:#0f172a}
 .statusGuideText{margin-top:.3rem;font-size:.8rem;line-height:1.55;color:#64748b}
+.statusGuideDialog{width:100%;max-width:34rem;border-radius:1.25rem;background:#fff;padding:1.5rem;box-shadow:0 25px 50px rgba(15,23,42,.28)}
+.statusGuideDialogHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
+.statusGuideDialogEyebrow{font-size:.75rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#64748b}
+.statusGuideDialogTitle{margin-top:.4rem;font-size:1.75rem;font-weight:700;color:#0f172a}
+.statusGuideDialogClose{border:1px solid #cbd5e1;border-radius:.75rem;background:#fff;padding:.65rem 1rem;font-size:.85rem;font-weight:600;color:#334155;transition:background-color var(--app-motion-duration) var(--app-motion-ease)}
+.statusGuideDialogClose:hover{background:#f8fafc}
 @media (min-width:1280px){.overviewSummaryRow{align-items:stretch}.requestTabs{flex:0 0 18rem}.requestTabsPanel{min-height:100%}}
