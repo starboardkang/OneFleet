@@ -1,4 +1,4 @@
-import OneFleetNativeApp from './native/OneFleetNativeApp'
+import OneFleetNativeApp from './src/native/OneFleetNativeApp'
 
 export default function App() {
   return <OneFleetNativeApp />
