@@ -1,5 +1,5 @@
-import OneFleetNativeApp from './native/OneFleetNativeApp'
+import RootLayout from './app/_layout'
 
 export default function App() {
-  return <OneFleetNativeApp />
+  return <RootLayout />
 }
