@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import heroLogo from '../../../../assets/hero-logo.png'
-import Group71 from './Group71'
+import RequestViewTabs from './RequestViewTabs'
 import ProfileModal from '../../global/profile/ProfileModal'
 import type { Profile } from '../../global/profile/types'
 import RequestFormCreate from '../../global/transport/RequestFormCreate'
@@ -510,7 +510,7 @@ export function RequesterPortal({
           <div className={styles.overviewSummaryRow}>
             <div className={styles.requestTabs}>
               <div className={styles.requestTabsPanel}>
-                <Group71 activeView={requestView} onChange={setRequestView} />
+                <RequestViewTabs activeView={requestView} onChange={setRequestView} />
 
                 <button
                   type="button"

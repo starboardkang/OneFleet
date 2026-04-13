@@ -3,17 +3,17 @@ import SegmentedControl from '../../global/common/SegmentedControl'
 
 type RequestView = 'active' | 'past'
 
-type Group71Props = {
+type RequestViewTabsProps = {
   activeView: RequestView
   onChange: (view: RequestView) => void
 }
 
-export default function Group71({ activeView, onChange }: Group71Props) {
-  const onActiveRequestsClick = useCallback(() => {
+export default function RequestViewTabs({ activeView, onChange }: RequestViewTabsProps) {
+  const handleActiveRequestsClick = useCallback(() => {
     onChange('active')
   }, [onChange])
 
-  const onPASTREQUESTSTextClick = useCallback(() => {
+  const handlePastRequestsClick = useCallback(() => {
     onChange('past')
   }, [onChange])
 
@@ -26,11 +26,11 @@ export default function Group71({ activeView, onChange }: Group71Props) {
       value={activeView}
       onChange={(nextValue) => {
         if (nextValue === 'active') {
-          onActiveRequestsClick()
+          handleActiveRequestsClick()
           return
         }
 
-        onPASTREQUESTSTextClick()
+        handlePastRequestsClick()
       }}
     />
   )
