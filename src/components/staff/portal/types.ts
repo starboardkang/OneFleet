@@ -72,6 +72,7 @@ export type ApprovalDispatchItem = {
   vehiclePlateNumber: string
   gasAllocationReference: string
   overtimeRequest: string
+  dispatchRemarks: string
   status: 'For Approval'
 }
 
@@ -83,4 +84,5 @@ export type DispatchFormState = {
   vehiclePlateNumber: string
   gasAllocationReference: string
   overtimeRequest: string
+  dispatchRemarks: string
 }

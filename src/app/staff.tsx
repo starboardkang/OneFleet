@@ -2,9 +2,10 @@ import { LoginPortal } from '../components/global/auth/LoginPortal'
 
 type StaffRouteProps = {
   onSwitch: (portal: 'requester' | 'staff') => void
+  onSuccess: () => void
 }
 
-export default function StaffRoute({ onSwitch }: StaffRouteProps) {
+export default function StaffRoute({ onSwitch, onSuccess }: StaffRouteProps) {
   return (
     <LoginPortal
       activePortal="staff"
@@ -15,6 +16,7 @@ export default function StaffRoute({ onSwitch }: StaffRouteProps) {
         email: 'staff@onefleet.local',
         password: 'Staff123!',
       }}
+      onSuccess={onSuccess}
     />
   )
 }

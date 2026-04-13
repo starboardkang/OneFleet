@@ -144,36 +144,38 @@ export default function VehicleOccupancyCalendarModal({
             </select>
           </div>
 
-          <div className={styles.calendarWeekdays}>
-            {weekdayLabels.map((label) => (
-              <span key={label}>{label}</span>
-            ))}
-          </div>
+          <div className={styles.calendarGridWrap}>
+            <div className={styles.calendarWeekdays}>
+              {weekdayLabels.map((label) => (
+                <span key={label}>{label}</span>
+              ))}
+            </div>
 
-          <div className={styles.calendarGrid}>
-            {calendarDays.map((day) => {
-              const dayOccupancies = day.date ? occupancyMap.get(day.date) ?? [] : []
+            <div className={styles.calendarGrid}>
+              {calendarDays.map((day) => {
+                const dayOccupancies = day.date ? occupancyMap.get(day.date) ?? [] : []
 
-              return (
-                <div
-                  key={day.key}
-                  className={[
-                    styles.calendarCell,
-                    day.date ? styles.calendarCellActive : styles.calendarCellMuted,
-                    dayOccupancies.length > 0 ? styles.calendarCellOccupied : '',
-                  ].join(' ')}
-                >
-                  {day.dayNumber ? <span className={styles.calendarDayNumber}>{day.dayNumber}</span> : null}
-                  <div className={styles.calendarOccupancyStack}>
-                    {dayOccupancies.map((requestId) => (
-                      <span key={`${day.key}-${requestId}`} className={styles.calendarOccupancyChip}>
-                        {requestId}
-                      </span>
-                    ))}
+                return (
+                  <div
+                    key={day.key}
+                    className={[
+                      styles.calendarCell,
+                      day.date ? styles.calendarCellActive : styles.calendarCellMuted,
+                      dayOccupancies.length > 0 ? styles.calendarCellOccupied : '',
+                    ].join(' ')}
+                  >
+                    {day.dayNumber ? <span className={styles.calendarDayNumber}>{day.dayNumber}</span> : null}
+                    <div className={styles.calendarOccupancyStack}>
+                      {dayOccupancies.map((requestId) => (
+                        <span key={`${day.key}-${requestId}`} className={styles.calendarOccupancyChip}>
+                          {requestId}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )
-            })}
+                )
+              })}
+            </div>
           </div>
         </div>
       </div>

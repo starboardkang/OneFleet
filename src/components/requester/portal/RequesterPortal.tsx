@@ -206,6 +206,17 @@ const initialRequests: RequestItem[] = [
 
 const today = new Date('2026-04-04T00:00:00')
 
+type PastRequestMonthGroup = {
+  monthKey: string
+  monthLabel: string
+  requests: RequestItem[]
+}
+
+type PastRequestYearGroup = {
+  year: string
+  months: PastRequestMonthGroup[]
+}
+
 function formatRequestedAt(dateValue: string) {
   const parsedDate = new Date(`${dateValue}T00:00:00`)
   return `Requested: ${parsedDate.toLocaleDateString('en-US', {
@@ -241,6 +252,51 @@ function formatSchedule(dateValue: string, timeValue: string) {
     year: 'numeric',
   })
   return `${formattedDate} - ${timeValue}`
+}
+
+function formatMonthYear(dateValue: string) {
+  return new Date(`${dateValue}T00:00:00`).toLocaleDateString('en-US', {
+    month: 'long',
+    year: 'numeric',
+  })
+}
+
+function groupPastRequests(requests: RequestItem[]): PastRequestYearGroup[] {
+  const yearMap = new Map<string, Map<string, RequestItem[]>>()
+
+  requests.forEach((request) => {
+    const requestDate = new Date(`${request.requestedOn}T00:00:00`)
+    const yearKey = String(requestDate.getFullYear())
+    const monthKey = `${yearKey}-${String(requestDate.getMonth() + 1).padStart(2, '0')}`
+
+    if (!yearMap.has(yearKey)) {
+      yearMap.set(yearKey, new Map())
+    }
+
+    const monthMap = yearMap.get(yearKey)
+    if (!monthMap) {
+      return
+    }
+
+    if (!monthMap.has(monthKey)) {
+      monthMap.set(monthKey, [])
+    }
+
+    monthMap.get(monthKey)?.push(request)
+  })
+
+  return Array.from(yearMap.entries())
+    .sort(([yearA], [yearB]) => Number(yearB) - Number(yearA))
+    .map(([year, monthMap]) => ({
+      year,
+      months: Array.from(monthMap.entries())
+        .sort(([monthA], [monthB]) => monthB.localeCompare(monthA))
+        .map(([monthKey, monthRequests]) => ({
+          monthKey,
+          monthLabel: formatMonthYear(monthRequests[0].requestedOn),
+          requests: [...monthRequests].sort((requestA, requestB) => requestB.requestedOn.localeCompare(requestA.requestedOn)),
+        })),
+    }))
 }
 
 function buildRequestFromForm(
@@ -341,6 +397,8 @@ export function RequesterPortal({
   const [requests, setRequests] = useState<RequestItem[]>(initialRequests)
   const [editingRequestId, setEditingRequestId] = useState<string | null>(null)
   const [isCreateOpen, setIsCreateOpen] = useState(false)
+  const [openPastYear, setOpenPastYear] = useState<string | null>(null)
+  const [openPastMonth, setOpenPastMonth] = useState<string | null>(null)
 
   const syncRequestOverlays = (nextRequest: RequestItem) => {
     if (selectedRequest?.id === nextRequest.id) {
@@ -394,9 +452,69 @@ export function RequesterPortal({
     () => requests.filter((request) => getRequestAgeInDays(request.requestedOn) >= 10),
     [requests],
   )
+  const groupedPastRequests = useMemo(() => groupPastRequests(pastRequestItems), [pastRequestItems])
+  const activePastYear =
+    groupedPastRequests.some((group) => group.year === openPastYear) ? openPastYear : groupedPastRequests[0]?.year ?? null
+  const activePastYearGroup = groupedPastRequests.find((group) => group.year === activePastYear) ?? null
+  const activePastMonth =
+    activePastYearGroup?.months.some((group) => group.monthKey === openPastMonth)
+      ? openPastMonth
+      : activePastYearGroup?.months[0]?.monthKey ?? null
 
   const visibleRequests = requestView === 'active' ? activeRequestItems : pastRequestItems
   const editingRequest = requests.find((request) => request.id === editingRequestId) ?? null
+
+  const handleResubmit = (request: RequestItem) => {
+    setRequests((current) =>
+      current.map((currentRequest) =>
+        currentRequest.id === request.id
+          ? buildRequestFromForm(
+              {
+                requestType:
+                  request.tripType === 'Driver Only'
+                    ? 'DRIVER ONLY'
+                    : request.tripType === 'Vehicle Only'
+                      ? 'VEHICLE ONLY'
+                      : request.tripType === 'Genset'
+                        ? 'GENSET'
+                        : request.tripType === 'Heavy Equipment'
+                          ? 'HEAVY EQUIPMENT'
+                          : 'DRIVER AND VEHICLE',
+                passengerNames: request.passengerNames,
+                purpose: request.purpose,
+                street: request.street,
+                province: request.province,
+                city: request.city,
+                dateFrom: request.dateFrom,
+                dateTo: request.dateTo,
+                timeNeeded: request.timeNeeded,
+              },
+              request.id,
+              '2026-04-04',
+              'Processing',
+              'Your resubmitted request is currently being reviewed by the dispatch office.',
+              [
+                ...request.remarksHistory,
+                {
+                  id: `${request.id.replace(/\s+/g, '')}-${request.remarksHistory.length + 1}`,
+                  author: 'Dispatch Office',
+                  date: 'April 4, 2026',
+                  createdAt: '2026-04-04T09:15:00+08:00',
+                  message: 'Your resubmitted request is currently being reviewed by the dispatch office.',
+                  viewedByRequester: false,
+                },
+              ],
+            )
+          : currentRequest,
+      ),
+    )
+
+    if (selectedRequest?.id === request.id) {
+      setSelectedRequest(null)
+    }
+
+    setRequestView('active')
+  }
 
   const summaryCounts = {
     Total: visibleRequests.length,
@@ -558,75 +676,158 @@ export function RequesterPortal({
         </section>
 
         <section className={styles.panel}>
-          <div className={styles.requestList}>
-            {visibleRequests.map((request) => {
-              const permissions = getRequestPermissions(request, requestView === 'past')
+          {requestView === 'active' ? (
+            <div className={styles.requestList}>
+              {visibleRequests.map((request) => {
+                const permissions = getRequestPermissions(request, false)
 
-              return (
-                <RequestCard
-                  key={request.id}
-                  request={request}
-                  canEdit={permissions.canEdit}
-                  canDelete={permissions.canDelete}
-                  canResubmit={permissions.canResubmit}
-                  onEdit={() => setEditingRequestId(request.id)}
-                  onOpenRemarks={() => handleOpenRemarks(request)}
-                  onOpenDetails={() => setSelectedRequest(request)}
-                  onDelete={() => setRequestPendingDelete(request)}
-                  onResubmit={() => {
-                    setRequests((current) =>
-                      current.map((currentRequest) =>
-                        currentRequest.id === request.id
-                          ? buildRequestFromForm(
-                              {
-                                requestType:
-                                  request.tripType === 'Driver Only'
-                                    ? 'DRIVER ONLY'
-                                    : request.tripType === 'Vehicle Only'
-                                      ? 'VEHICLE ONLY'
-                                      : request.tripType === 'Genset'
-                                        ? 'GENSET'
-                                        : request.tripType === 'Heavy Equipment'
-                                          ? 'HEAVY EQUIPMENT'
-                                          : 'DRIVER AND VEHICLE',
-                                passengerNames: request.passengerNames,
-                                purpose: request.purpose,
-                                street: request.street,
-                                province: request.province,
-                                city: request.city,
-                                dateFrom: request.dateFrom,
-                                dateTo: request.dateTo,
-                                timeNeeded: request.timeNeeded,
-                              },
-                              request.id,
-                              '2026-04-04',
-                              'Processing',
-                              'Your resubmitted request is currently being reviewed by the dispatch office.',
-                              [
-                                ...request.remarksHistory,
-                                {
-                                  id: `${request.id.replace(/\s+/g, '')}-${request.remarksHistory.length + 1}`,
-                                  author: 'Dispatch Office',
-                                  date: 'April 4, 2026',
-                                  createdAt: '2026-04-04T09:15:00+08:00',
-                                  message:
-                                    'Your resubmitted request is currently being reviewed by the dispatch office.',
-                                  viewedByRequester: false,
-                                },
-                              ],
-                            )
-                          : currentRequest,
-                      ),
-                    )
-                    if (selectedRequest?.id === request.id) {
-                      setSelectedRequest(null)
-                    }
-                    setRequestView('active')
-                  }}
-                />
-              )
-            })}
-          </div>
+                return (
+                  <RequestCard
+                    key={request.id}
+                    request={request}
+                    canEdit={permissions.canEdit}
+                    canDelete={permissions.canDelete}
+                    canResubmit={permissions.canResubmit}
+                    onEdit={() => setEditingRequestId(request.id)}
+                    onOpenRemarks={() => handleOpenRemarks(request)}
+                    onOpenDetails={() => setSelectedRequest(request)}
+                    onDelete={() => setRequestPendingDelete(request)}
+                    onResubmit={() => handleResubmit(request)}
+                  />
+                )
+              })}
+            </div>
+          ) : (
+            <div className={styles.pastTableLayout}>
+              {groupedPastRequests.map((yearGroup) => (
+                <div key={yearGroup.year} className={styles.pastYearGroup}>
+                  <button
+                    type="button"
+                    className={styles.pastYearSummary}
+                    aria-expanded={activePastYear === yearGroup.year}
+                    onClick={() => {
+                      if (activePastYear === yearGroup.year) {
+                        setOpenPastYear(null)
+                        setOpenPastMonth(null)
+                        return
+                      }
+
+                      setOpenPastYear(yearGroup.year)
+                      setOpenPastMonth(yearGroup.months[0]?.monthKey ?? null)
+                    }}
+                  >
+                    <div>
+                      <div className={styles.pastSummaryEyebrow}>Year</div>
+                      <div className={styles.pastSummaryTitle}>{yearGroup.year}</div>
+                    </div>
+                    <span className={styles.pastSummaryCount}>
+                      {yearGroup.months.reduce((count, monthGroup) => count + monthGroup.requests.length, 0)} requests
+                    </span>
+                  </button>
+
+                  {activePastYear === yearGroup.year ? (
+                  <div className={styles.pastYearContent}>
+                    {yearGroup.months.map((monthGroup) => (
+                      <div key={monthGroup.monthKey} className={styles.pastMonthGroup}>
+                        <button
+                          type="button"
+                          className={styles.pastMonthSummary}
+                          aria-expanded={activePastMonth === monthGroup.monthKey}
+                          onClick={() => {
+                            setOpenPastMonth((current) => (current === monthGroup.monthKey ? null : monthGroup.monthKey))
+                          }}
+                        >
+                          <div>
+                            <div className={styles.pastSummaryEyebrow}>Month</div>
+                            <div className={styles.pastMonthTitle}>{monthGroup.monthLabel}</div>
+                          </div>
+                          <span className={styles.pastSummaryCount}>{monthGroup.requests.length} requests</span>
+                        </button>
+
+                        {activePastMonth === monthGroup.monthKey ? (
+                        <div className={styles.pastTableWrap}>
+                          <table className={styles.pastTable}>
+                            <thead>
+                              <tr>
+                                <th scope="col">Request No.</th>
+                                <th scope="col">Requested On</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Destination</th>
+                                <th scope="col">Schedule</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {monthGroup.requests.map((request) => {
+                                const permissions = getRequestPermissions(request, true)
+                                const hasUnreadRemarks = request.remarksHistory.some((entry) => !entry.viewedByRequester)
+
+                                return (
+                                  <tr key={request.id}>
+                                    <td className={styles.pastRequestIdCell}>{request.id}</td>
+                                    <td>{formatLongDate(request.requestedOn)}</td>
+                                    <td>{request.tripType}</td>
+                                    <td>{request.destination}</td>
+                                    <td>{formatScheduleRange(request.dateFrom, request.dateTo, request.timeNeeded)}</td>
+                                    <td>
+                                      <span className={[styles.requestStatus, styles.pastTableStatus, styles[`status${request.status}` as keyof typeof styles]].join(' ')}>
+                                        {request.status.toUpperCase()}
+                                      </span>
+                                    </td>
+                                    <td>
+                                      <div className={styles.pastTableActions}>
+                                        {permissions.canResubmit ? (
+                                          <button type="button" className={styles.actionResubmit} onClick={() => handleResubmit(request)}>
+                                            Re-submit
+                                          </button>
+                                        ) : null}
+                                        <button
+                                          type="button"
+                                          className={[styles.actionEdit, !permissions.canEdit ? styles.buttonDisabled : ''].join(' ')}
+                                          onClick={() => setEditingRequestId(request.id)}
+                                          disabled={!permissions.canEdit}
+                                        >
+                                          Edit
+                                        </button>
+                                        <button
+                                          type="button"
+                                          className={[styles.actionCancel, !permissions.canDelete ? styles.buttonDisabled : ''].join(' ')}
+                                          onClick={() => setRequestPendingDelete(request)}
+                                          disabled={!permissions.canDelete}
+                                        >
+                                          Delete
+                                        </button>
+                                        <button type="button" className={styles.remarkButton} onClick={() => handleOpenRemarks(request)}>
+                                          Remarks
+                                          {hasUnreadRemarks ? (
+                                            <span className={styles.remarkUnreadDot} aria-hidden="true" />
+                                          ) : null}
+                                        </button>
+                                        <button
+                                          type="button"
+                                          className={styles.actionDetails}
+                                          onClick={() => setSelectedRequest(request)}
+                                        >
+                                          More Details
+                                        </button>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                )
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                        ) : null}
+                      </div>
+                    ))}
+                  </div>
+                  ) : null}
+                </div>
+              ))}
+            </div>
+          )}
         </section>
       </main>
 

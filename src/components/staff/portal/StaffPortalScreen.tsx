@@ -6,6 +6,7 @@ import RemarksHistoryModal from '../../global/transport/RemarksHistoryModal'
 import TripDetailsModal from '../../global/transport/TripDetailsModal'
 import type { RequestFormValues } from '../../global/transport/types'
 import DispatchRequestModal from '../transport/DispatchRequestModal'
+import DispatchQueueRequestModal from '../transport/DispatchQueueRequestModal'
 import RequestReviewModal from '../transport/RequestReviewModal'
 import StaffTransportContent from '../transport/StaffTransportContent'
 import VehicleOccupancyCalendarModal from '../transport/VehicleOccupancyCalendarModal'
@@ -60,6 +61,7 @@ export default function StaffPortalScreen({
   const [reviewRemarks, setReviewRemarks] = useState('')
   const [approvalRequests, setApprovalRequests] = useState<ApprovalDispatchItem[]>([])
   const [dispatchSourceRequest, setDispatchSourceRequest] = useState<StaffRequestItem | null>(null)
+  const [dispatchQueueRequest, setDispatchQueueRequest] = useState<StaffRequestItem | null>(null)
   const [isDispatchModalOpen, setIsDispatchModalOpen] = useState(false)
   const [dispatchValidationMessage, setDispatchValidationMessage] = useState('')
   const [dispatchForm, setDispatchForm] = useState<DispatchFormState>({
@@ -70,6 +72,7 @@ export default function StaffPortalScreen({
     vehiclePlateNumber: '',
     gasAllocationReference: '',
     overtimeRequest: '',
+    dispatchRemarks: '',
   })
 
   const today = useMemo(
@@ -140,6 +143,7 @@ export default function StaffPortalScreen({
         vehiclePlateNumber: '',
         gasAllocationReference: '',
         overtimeRequest: '',
+        dispatchRemarks: '',
       })
       setDispatchValidationMessage('')
       return
@@ -178,6 +182,7 @@ export default function StaffPortalScreen({
       vehiclePlateNumber: '',
       gasAllocationReference: '',
       overtimeRequest: '',
+      dispatchRemarks: source?.remarks ?? '',
     })
     setDispatchValidationMessage('')
   }
@@ -186,6 +191,10 @@ export default function StaffPortalScreen({
     setDispatchSourceRequest(source ?? null)
     resetDispatchForm(source ?? null)
     setIsDispatchModalOpen(true)
+  }
+
+  const openDispatchQueueRequest = (request: StaffRequestItem) => {
+    setDispatchQueueRequest(request)
   }
 
   const handleToggleMenu = () => {
@@ -261,6 +270,10 @@ export default function StaffPortalScreen({
       setActiveTransportTab('dispatch')
     }
 
+    if (reviewMode === 'reject' && dispatchQueueRequest?.id === reviewRequest.id) {
+      setDispatchQueueRequest(null)
+    }
+
     setReviewRequest(null)
     setReviewRemarks('')
   }
@@ -292,6 +305,7 @@ export default function StaffPortalScreen({
         vehiclePlateNumber: dispatchForm.vehiclePlateNumber.trim(),
         gasAllocationReference: dispatchForm.gasAllocationReference.trim(),
         overtimeRequest: dispatchForm.overtimeRequest.trim(),
+        dispatchRemarks: dispatchForm.dispatchRemarks.trim(),
         status: 'For Approval',
       },
       ...current,
@@ -304,6 +318,7 @@ export default function StaffPortalScreen({
     setActiveTransportTab('approval')
     setIsDispatchModalOpen(false)
     setDispatchSourceRequest(null)
+    setDispatchQueueRequest(null)
   }
 
   return (
@@ -347,10 +362,11 @@ export default function StaffPortalScreen({
               onOpenCreate={() => setIsCreateOpen(true)}
               onOpenDetails={setSelectedRequest}
               onOpenRemarks={setRemarksRequest}
-              onOpenCalendar={() => setIsCalendarOpen(true)}
-              onAcceptRequest={(request) => handleOpenReview(request, 'accept')}
-              onRejectRequest={(request) => handleOpenReview(request, 'reject')}
-              onOpenDispatchModal={openDispatchModal}
+          onOpenCalendar={() => setIsCalendarOpen(true)}
+          onAcceptRequest={(request) => handleOpenReview(request, 'accept')}
+          onRejectRequest={(request) => handleOpenReview(request, 'reject')}
+          onOpenDispatchRequest={openDispatchQueueRequest}
+          onOpenDispatchModal={openDispatchModal}
             />
           ) : (
             <>
@@ -459,9 +475,28 @@ export default function StaffPortalScreen({
         />
       ) : null}
 
+      {dispatchQueueRequest ? (
+        <DispatchQueueRequestModal
+          request={dispatchQueueRequest}
+          onClose={() => setDispatchQueueRequest(null)}
+          onOpenRemarks={() => {
+            setRemarksRequest(dispatchQueueRequest)
+          }}
+          onDispatch={() => {
+            setDispatchQueueRequest(null)
+            openDispatchModal(dispatchQueueRequest)
+          }}
+          onReject={() => {
+            setDispatchQueueRequest(null)
+            handleOpenReview(dispatchQueueRequest, 'reject')
+          }}
+        />
+      ) : null}
+
       {isDispatchModalOpen ? (
         <DispatchRequestModal
           values={dispatchForm}
+          sourceRequest={dispatchSourceRequest}
           requestOptions={dispatchRequests}
           driverOptions={availableDrivers}
           vehicleOptions={unreservedVehicles}

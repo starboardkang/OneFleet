@@ -44,7 +44,7 @@ export default function RequestReviewModal({
         <div className={styles.dispatchModalBody}>
           <p className={styles.reviewModalText}>
             {isReject
-              ? 'Enter the rejection remarks before sending this transport request back.'
+              ? 'Confirm that this transport request should be rejected, then enter the rejection remarks that will be sent back with the request.'
               : 'Add an optional remark before confirming that this transport request will be moved to dispatch.'}
           </p>
 

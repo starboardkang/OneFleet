@@ -9,6 +9,7 @@ import type {
 
 type DispatchRequestModalProps = {
   values: DispatchFormState
+  sourceRequest: StaffRequestItem | null
   requestOptions: StaffRequestItem[]
   driverOptions: DriverOption[]
   vehicleOptions: VehicleOption[]
@@ -21,6 +22,7 @@ type DispatchRequestModalProps = {
 
 export default function DispatchRequestModal({
   values,
+  sourceRequest,
   requestOptions,
   driverOptions,
   vehicleOptions,
@@ -59,6 +61,17 @@ export default function DispatchRequestModal({
               ))}
             </select>
           </label>
+
+          {sourceRequest ? (
+            <label className={styles.dispatchField}>
+              <span className={styles.dispatchFieldLabel}>Current Request Remarks</span>
+              <textarea
+                className={[styles.dispatchInput, styles.reviewTextarea].join(' ')}
+                value={sourceRequest.remarks}
+                readOnly
+              />
+            </label>
+          ) : null}
 
           <div className={styles.dispatchSectionTitle}>Driver &amp; Vehicle Assignment</div>
           <div className={styles.dispatchTwoColumn}>
@@ -123,6 +136,16 @@ export default function DispatchRequestModal({
               />
             </label>
           </div>
+
+          <label className={styles.dispatchField}>
+            <span className={styles.dispatchFieldLabel}>Dispatch Remarks</span>
+            <textarea
+              className={[styles.dispatchInput, styles.reviewTextarea].join(' ')}
+              value={values.dispatchRemarks}
+              onChange={(event) => onChange('dispatchRemarks', event.target.value)}
+              placeholder="Add the dispatch note that should accompany this request for approval."
+            />
+          </label>
 
           {validationMessage ? <div className={styles.dispatchValidation}>{validationMessage}</div> : null}
         </div>

@@ -26,6 +26,8 @@ export function useLoginForm({
   credentials,
   onSuccess,
 }: UseLoginFormOptions): UseLoginFormResult {
+  const sanitizeCredentialInput = (value: string) => value.replace(/\s+/g, '')
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -59,8 +61,8 @@ export function useLoginForm({
     password,
     error,
     success,
-    setEmail,
-    setPassword,
+    setEmail: (value) => setEmail(sanitizeCredentialInput(value)),
+    setPassword: (value) => setPassword(sanitizeCredentialInput(value)),
     handleSubmit,
   }
 }
