@@ -176,11 +176,11 @@
 .dispatchTableRow:last-child{border-bottom:none}
 .dispatchStatusChip{display:inline-flex;justify-content:center;align-items:center;min-height:1.2rem;padding:0 .45rem;border-radius:.25rem;background:#ffe6ba;color:#d48700;font-size:.6rem;font-weight:700}
 .dispatchActionGroup{display:flex;gap:.2rem;flex-wrap:wrap}
-.dispatchApproveButton,.dispatchRejectButton{border:none;border-radius:.18rem;padding:.18rem .35rem;font-size:.6rem;font-weight:700;transition:background-color var(--app-motion-duration) var(--app-motion-ease),color var(--app-motion-duration) var(--app-motion-ease),transform var(--app-motion-duration) var(--app-motion-ease)}
-.dispatchApproveButton{background:#bbf7d0;color:#0f9f6e}
-.dispatchApproveButton:hover{background:#86efac;transform:translateY(-1px)}
+.dispatchApproveButton,.dispatchRejectButton{border:none;font-weight:700;transition:background-color var(--app-motion-duration) var(--app-motion-ease),color var(--app-motion-duration) var(--app-motion-ease),transform var(--app-motion-duration) var(--app-motion-ease)}
+.dispatchApproveButton{min-height:2rem;border-radius:.35rem;background:#0f172a;padding:0 .95rem;font-size:.76rem;font-weight:700;color:#fff}
+.dispatchApproveButton:hover{background:#1e293b;transform:translateY(-1px)}
 .dispatchApproveButton:hover::before{transform:translateX(520%) skewX(-24deg)}
-.dispatchRejectButton{background:#fecdd3;color:#ef4444}
+.dispatchRejectButton{border-radius:.18rem;padding:.18rem .35rem;font-size:.6rem;background:#fecdd3;color:#ef4444}
 .dispatchRejectButton:hover{background:#fda4af;transform:translateY(-1px)}
 .dispatchRejectButton:hover::before{transform:translateX(520%) skewX(-24deg)}
 .approvalStatusChip{display:inline-flex;justify-content:center;align-items:center;min-height:1.2rem;padding:0 .45rem;border-radius:.25rem;background:#dbeafe;color:#2563eb;font-size:.6rem;font-weight:700}

@@ -11,8 +11,8 @@ type TimePickerModalProps = {
 const parseTimeValue = (value: string) => {
   if (!value) {
     return {
-      hour: '7',
-      minute: '15',
+      hour: '8',
+      minute: '00',
       period: 'AM' as const,
     }
   }
