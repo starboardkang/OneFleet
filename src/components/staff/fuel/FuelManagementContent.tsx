@@ -155,7 +155,6 @@ export default function FuelManagementContent() {
     <section className={styles.fuelPage}>
       <div className={styles.fuelHero}>
         <div>
-          <div className={styles.fuelGreeting}>Hello, Juan!</div>
           <h2 className={styles.fuelPageTitle}>Fuel Management</h2>
         </div>
 

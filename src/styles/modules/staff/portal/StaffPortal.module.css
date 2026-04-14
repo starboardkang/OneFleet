@@ -354,13 +354,13 @@
 .fuelTable th{font-size:.72rem;font-weight:600;letter-spacing:.04em;color:rgba(0,0,0,.5)}
 .fuelTable td{font-size:.82rem;font-weight:500;color:#111827}
 .fuelTable tbody tr:hover{background:#f8fafc}
-.fuelActionRow{display:flex;gap:.45rem}
-.fuelEditButton,.fuelDeleteButton{min-height:2rem;border-radius:999px;padding:0 .85rem;font-size:.76rem;font-weight:600;transition:background-color var(--app-motion-duration) var(--app-motion-ease),border-color var(--app-motion-duration) var(--app-motion-ease),color var(--app-motion-duration) var(--app-motion-ease),transform var(--app-motion-duration) var(--app-motion-ease)}
-.fuelEditButton{border:1px solid #cbd5e1;background:#fff;color:#111827}
-.fuelDeleteButton{border:1px solid #ff383c;background:rgba(255,56,60,.14);color:rgba(251,29,33,.9)}
+.fuelActionRow{display:flex;gap:.5rem}
+.fuelEditButton,.fuelDeleteButton{min-height:2rem;border:none;border-radius:.35rem;padding:0 .95rem;font-size:.76rem;font-weight:700;transition:background-color var(--app-motion-duration) var(--app-motion-ease),color var(--app-motion-duration) var(--app-motion-ease),transform var(--app-motion-duration) var(--app-motion-ease),box-shadow var(--app-motion-duration) var(--app-motion-ease)}
+.fuelEditButton{background:#eef2f7;color:#60748a}
+.fuelDeleteButton{background:#ffdddd;color:#ff5252}
 .fuelEditButton:hover,.fuelDeleteButton:hover{transform:translateY(-1px)}
-.fuelEditButton:hover{background:#f8fafc}
-.fuelDeleteButton:hover{background:rgba(255,56,60,.22)}
+.fuelEditButton:hover{background:#e2e8f0}
+.fuelDeleteButton:hover{background:#ffcfd2}
 @media (min-width:768px){.fuelHero{flex-direction:row;align-items:flex-end;justify-content:space-between}.fuelHeroActions{width:100%;max-width:48rem;flex-direction:row;justify-content:flex-end}.fuelTopGrid{grid-template-columns:minmax(0,2.2fr) minmax(320px,1fr)}}
 .fuelLogModal{width:min(100%,calc(100vw - 1.5rem));max-width:64rem;max-height:calc(100vh - 2.5rem);overflow-y:auto;border:1px solid #dbe4ee;border-radius:1.25rem;background:#fff;box-shadow:0 28px 56px rgba(15,23,42,.24);scrollbar-width:thin;scrollbar-color:rgba(100,116,139,.45) transparent}
 .fuelLogModal::-webkit-scrollbar{width:8px;height:8px}
