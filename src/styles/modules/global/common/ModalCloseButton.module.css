@@ -1,2 +1,19 @@
-.button{display:inline-flex;align-items:center;justify-content:center}
-.icon{width:1.25rem;height:1.25rem}
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background-color var(--app-motion-duration) var(--app-motion-ease),
+    border-color var(--app-motion-duration) var(--app-motion-ease),
+    color var(--app-motion-duration) var(--app-motion-ease),
+    transform var(--app-motion-duration) var(--app-motion-ease);
+}
+
+.button:hover {
+  transform: translateY(-1px);
+}
+
+.icon {
+  width: 1.1rem;
+  height: 1.1rem;
+}

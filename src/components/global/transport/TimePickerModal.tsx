@@ -92,10 +92,18 @@ export default function TimePickerModal({ value, onChange, onClose }: TimePicker
         </div>
 
         <div className={styles.actions}>
-          <button type="button" className={styles.actionButton} onClick={onClose}>
+          <button
+            type="button"
+            className={[styles.actionButton, styles.secondaryAction].join(' ')}
+            onClick={onClose}
+          >
             CANCEL
           </button>
-          <button type="button" className={styles.actionButton} onClick={handleConfirm}>
+          <button
+            type="button"
+            className={[styles.actionButton, styles.primaryAction].join(' ')}
+            onClick={handleConfirm}
+          >
             OK
           </button>
         </div>

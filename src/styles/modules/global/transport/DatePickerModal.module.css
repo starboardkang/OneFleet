@@ -2,7 +2,7 @@
   position: absolute;
   left: 0;
   right: 0;
-  bottom: calc(100% + 10px);
+  bottom: calc(100% + 12px);
   z-index: 30;
 }
 
@@ -10,10 +10,10 @@
   width: 100%;
   border-radius: 20px;
   background: #fff;
-  padding: 14px;
+  padding: 16px;
   box-sizing: border-box;
-  border: 1px solid #d4d4d8;
-  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.18);
+  border: 1px solid #dbe4ee;
+  box-shadow: 0 24px 48px rgba(15, 23, 42, 0.2);
 }
 
 .header {
@@ -25,12 +25,28 @@
 }
 
 .arrowButton {
-  border: none;
-  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #dbe4ee;
+  border-radius: 999px;
+  background: #fff;
   color: #1f2937;
-  font-size: 30px;
+  font-size: 22px;
   line-height: 1;
   cursor: pointer;
+  transition:
+    background-color var(--app-motion-duration) var(--app-motion-ease),
+    border-color var(--app-motion-duration) var(--app-motion-ease),
+    transform var(--app-motion-duration) var(--app-motion-ease);
+}
+
+.arrowButton:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
 }
 
 .headerSelects {
@@ -41,12 +57,13 @@
 
 .headerSelect {
   min-height: 42px;
-  border-radius: 14px;
-  border: 1px solid #d4d4d8;
-  background: #fff;
-  color: #2d2d2d;
+  border-radius: 12px;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #0f172a;
   font: inherit;
-  font-size: 17px;
+  font-size: 15px;
+  font-weight: 600;
   padding: 0 12px;
 }
 
@@ -63,8 +80,11 @@
 
 .weekday {
   text-align: center;
-  color: #848484;
-  font-size: 14px;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .dayButton {
@@ -72,14 +92,24 @@
   border: none;
   border-radius: 10px;
   background: transparent;
-  color: #2d2d2d;
+  color: #0f172a;
   font: inherit;
-  font-size: 18px;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
+  transition:
+    background-color var(--app-motion-duration) var(--app-motion-ease),
+    color var(--app-motion-duration) var(--app-motion-ease),
+    transform var(--app-motion-duration) var(--app-motion-ease);
+}
+
+.dayButton:hover {
+  background: #f1f5f9;
+  transform: translateY(-1px);
 }
 
 .selectedDay {
-  background: #1e293b;
+  background: #0f172a;
   color: #fff;
 }
 
@@ -88,20 +118,48 @@
 }
 
 .actions {
-  margin-top: 10px;
+  margin-top: 14px;
   display: flex;
   justify-content: flex-end;
-  gap: 14px;
+  gap: 10px;
 }
 
 .actionButton {
-  border: none;
-  background: transparent;
-  color: #1e293b;
+  border-radius: 12px;
+  padding: 0.7rem 1rem;
   font: inherit;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
+  transition:
+    background-color var(--app-motion-duration) var(--app-motion-ease),
+    border-color var(--app-motion-duration) var(--app-motion-ease),
+    color var(--app-motion-duration) var(--app-motion-ease),
+    transform var(--app-motion-duration) var(--app-motion-ease);
+}
+
+.actionButton:hover {
+  transform: translateY(-1px);
+}
+
+.secondaryAction {
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  color: #475569;
+}
+
+.secondaryAction:hover {
+  background: #f8fafc;
+}
+
+.primaryAction {
+  border: 1px solid #0f172a;
+  background: #0f172a;
+  color: #fff;
+}
+
+.primaryAction:hover {
+  background: #1e293b;
 }
 
 @media (max-width: 680px) {
@@ -126,7 +184,9 @@
   }
 
   .arrowButton {
-    font-size: 24px;
+    width: 28px;
+    height: 28px;
+    font-size: 18px;
   }
 
   .weekday,

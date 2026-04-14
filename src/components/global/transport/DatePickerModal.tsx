@@ -143,10 +143,18 @@ export default function DatePickerModal({
         </div>
 
         <div className={styles.actions}>
-          <button type="button" className={styles.actionButton} onClick={onClose}>
+          <button
+            type="button"
+            className={[styles.actionButton, styles.secondaryAction].join(' ')}
+            onClick={onClose}
+          >
             CANCEL
           </button>
-          <button type="button" className={styles.actionButton} onClick={onConfirm}>
+          <button
+            type="button"
+            className={[styles.actionButton, styles.primaryAction].join(' ')}
+            onClick={onConfirm}
+          >
             OK
           </button>
         </div>

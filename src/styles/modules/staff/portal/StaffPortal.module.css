@@ -279,3 +279,114 @@
 .calendarOccupancyStack{display:flex;flex-direction:column;gap:.35rem;margin-top:.6rem}
 .calendarOccupancyChip{display:inline-flex;align-self:flex-start;border-radius:999px;background:#1d4ed8;padding:.25rem .55rem;font-size:.68rem;font-weight:700;color:#fff}
 @media (min-width:768px){.transportHeaderActions{max-width:46rem;flex-wrap:wrap;justify-content:flex-end}.transportStats{grid-template-columns:repeat(6,minmax(0,1fr))}.calendarToolbar{grid-template-columns:minmax(0,1fr) 20rem}.calendarWeekdays,.calendarGrid{min-width:0;grid-template-columns:repeat(7,minmax(0,1fr))}.calendarCell{min-height:7.25rem}}
+.dispatchModalOverlay{background:rgba(15,23,42,.5);backdrop-filter:blur(8px);padding:1.25rem}
+.dispatchModal,.dispatchDetailModal,.reviewModal,.calendarModal{border:1px solid #dbe4ee;border-radius:1.25rem;box-shadow:0 28px 56px rgba(15,23,42,.24)}
+.dispatchModal,.dispatchDetailModal,.reviewModal,.calendarModal{max-height:calc(100vh - 2.5rem)}
+.dispatchModalHeader{padding:1.1rem 1.35rem;border-bottom:1px solid #e2e8f0}
+.dispatchModalTitle{font-size:1.75rem;color:#0f172a}
+.dispatchModalCloseButton{background:#fff;transition:background-color var(--app-motion-duration) var(--app-motion-ease),border-color var(--app-motion-duration) var(--app-motion-ease),transform var(--app-motion-duration) var(--app-motion-ease)}
+.dispatchModalCloseButton:hover{background:#f8fafc;border-color:#cbd5e1;transform:translateY(-1px)}
+.dispatchModalBody{gap:1rem;padding:1rem 1.2rem 1.15rem}
+.dispatchModalActions{gap:.75rem;padding:1rem 1.25rem 1.15rem;border-top:1px solid #e2e8f0}
+.reviewModalText{font-size:.9rem;line-height:1.7;color:#475569}
+.approvalModal{width:min(100%,calc(100vw - 1.5rem));max-width:54rem;max-height:calc(100vh - 2.5rem);overflow-y:auto;border:1px solid #dbe4ee;border-radius:1.25rem;background:#fff;box-shadow:0 28px 56px rgba(15,23,42,.24);scrollbar-width:thin;scrollbar-color:rgba(100,116,139,.45) transparent}
+.approvalModal::-webkit-scrollbar{width:8px;height:8px}
+.approvalModal::-webkit-scrollbar-track{background:transparent}
+.approvalModal::-webkit-scrollbar-thumb{border:2px solid transparent;border-radius:999px;background:rgba(100,116,139,.32);background-clip:padding-box}
+.approvalModal::-webkit-scrollbar-thumb:hover{background:rgba(100,116,139,.46);background-clip:padding-box}
+.approvalSectionTitle{font-size:1.3rem;font-weight:500;color:#1e293b}
+.approvalPanel{border:1px solid #dbe4ee;border-radius:1rem;background:#f8fafc;padding:1rem}
+.approvalColumns{display:grid;gap:1rem}
+.approvalColumn{display:flex;flex-direction:column;gap:.75rem}
+.approvalColumnTitle{font-size:.78rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#62748e}
+.approvalMetaGrid{display:grid;gap:.75rem;margin-top:1rem}
+.approvalField{display:flex;flex-direction:column;gap:.35rem}
+.approvalFieldLabel{font-size:.78rem;color:#62748e}
+.approvalFieldValue{min-height:3rem;border:1px solid #cbd5e1;border-radius:.6rem;background:#fff;padding:.85rem .95rem;font-size:.95rem;font-weight:600;color:#0f172a}
+.approvalApproveButton,.approvalRejectButton{min-height:3rem;border-radius:.65rem;padding:0 1.25rem;font-size:.95rem;font-weight:600;transition:background-color var(--app-motion-duration) var(--app-motion-ease),border-color var(--app-motion-duration) var(--app-motion-ease),color var(--app-motion-duration) var(--app-motion-ease),transform var(--app-motion-duration) var(--app-motion-ease)}
+.approvalApproveButton{border:1px solid #1d9e75;background:rgba(29,158,117,.2);color:#1d9e75}
+.approvalRejectButton{border:1px solid #ff6969;background:rgba(255,105,105,.18);color:#ff0000}
+.approvalApproveButton:hover,.approvalRejectButton:hover{transform:translateY(-1px)}
+.approvalApproveButton:hover{background:rgba(29,158,117,.28)}
+.approvalRejectButton:hover{background:rgba(255,105,105,.28)}
+@media (min-width:768px){.approvalColumns{grid-template-columns:repeat(2,minmax(0,1fr))}.approvalMetaGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.fuelPage{display:flex;flex-direction:column;gap:1.25rem}
+.fuelHero{display:flex;flex-direction:column;gap:1rem}
+.fuelGreeting{font-size:2rem;font-weight:400;color:#676666}
+.fuelPageTitle{font-size:2.25rem;font-weight:700;color:#1e293b}
+.fuelHeroActions{display:flex;flex-direction:column;gap:.75rem}
+.fuelTopGrid{display:grid;gap:1rem}
+.fuelChartCard,.fuelLogsCard{border:1px solid #cbd5e1;border-radius:1.25rem;background:#fff;box-shadow:0 1px 2px rgba(15,23,42,.05)}
+.fuelChartCard{padding:1.35rem}
+.fuelLogsCard{padding:1.1rem 1.1rem 1.25rem}
+.fuelCardHeader{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1rem}
+.fuelCardTitle{font-size:1.15rem;font-weight:700;color:#111827}
+.fuelMetricStack{display:grid;gap:1rem}
+.fuelMetricCard{display:flex;min-height:11rem;flex-direction:column;justify-content:space-between;border-radius:1rem;padding:1.25rem 1.35rem}
+.fuelMetricAmber{background:rgba(239,159,39,.18)}
+.fuelMetricBlue{background:rgba(38,139,255,.16)}
+.fuelMetricTitle{max-width:16rem;font-size:1.3rem;font-weight:500;color:#111827}
+.fuelMetricValue{font-size:2.35rem;font-weight:700;line-height:1;color:#0f172a}
+.fuelMetricAmber .fuelMetricValue,.fuelMetricAmber .fuelMetricTrend{color:#ef9f27}
+.fuelMetricBlue .fuelMetricValue,.fuelMetricBlue .fuelMetricTrend{color:#268bff}
+.fuelMetricTrend{font-size:.95rem;font-weight:600}
+.fuelChartScale{display:grid;grid-template-columns:120px repeat(7,minmax(0,1fr));margin-bottom:.8rem;font-size:.78rem;font-weight:600;color:#94a3b8}
+.fuelChartScale span:first-child{opacity:0}
+.fuelChartRows{display:flex;flex-direction:column;gap:.9rem}
+.fuelChartRow{display:grid;grid-template-columns:110px minmax(0,1fr) 70px;align-items:center;gap:.85rem}
+.fuelChartLabel,.fuelChartValue{font-size:.875rem;font-weight:500;color:rgba(0,0,0,.58)}
+.fuelChartTrack{height:.95rem;border-radius:999px;background:#edf2f7;overflow:hidden}
+.fuelChartBar{height:100%;border-radius:999px}
+.fuelBarGreen{background:#1d9e75}
+.fuelBarRed{background:rgba(251,29,33,.9)}
+.fuelBarBlue{background:#185fa5}
+.fuelBarSky{background:#83c1ff}
+.fuelBarAmber{background:#eb8d00}
+.fuelBarIndigo{background:#605ce0}
+.fuelBarNeutral{background:#d9d9d9}
+.fuelTableWrap{overflow-x:auto;scrollbar-width:thin;scrollbar-color:rgba(100,116,139,.45) transparent}
+.fuelTableWrap::-webkit-scrollbar{width:8px;height:8px}
+.fuelTableWrap::-webkit-scrollbar-track{background:transparent}
+.fuelTableWrap::-webkit-scrollbar-thumb{border:2px solid transparent;border-radius:999px;background:rgba(100,116,139,.32);background-clip:padding-box}
+.fuelTableWrap::-webkit-scrollbar-thumb:hover{background:rgba(100,116,139,.46);background-clip:padding-box}
+.fuelTable{width:100%;min-width:900px;border-collapse:collapse}
+.fuelTable th,.fuelTable td{padding:.95rem .8rem;border-bottom:1px solid #e2e8f0;text-align:left;vertical-align:middle}
+.fuelTable th{font-size:.72rem;font-weight:600;letter-spacing:.04em;color:rgba(0,0,0,.5)}
+.fuelTable td{font-size:.82rem;font-weight:500;color:#111827}
+.fuelTable tbody tr:hover{background:#f8fafc}
+.fuelActionRow{display:flex;gap:.45rem}
+.fuelEditButton,.fuelDeleteButton{min-height:2rem;border-radius:999px;padding:0 .85rem;font-size:.76rem;font-weight:600;transition:background-color var(--app-motion-duration) var(--app-motion-ease),border-color var(--app-motion-duration) var(--app-motion-ease),color var(--app-motion-duration) var(--app-motion-ease),transform var(--app-motion-duration) var(--app-motion-ease)}
+.fuelEditButton{border:1px solid #cbd5e1;background:#fff;color:#111827}
+.fuelDeleteButton{border:1px solid #ff383c;background:rgba(255,56,60,.14);color:rgba(251,29,33,.9)}
+.fuelEditButton:hover,.fuelDeleteButton:hover{transform:translateY(-1px)}
+.fuelEditButton:hover{background:#f8fafc}
+.fuelDeleteButton:hover{background:rgba(255,56,60,.22)}
+@media (min-width:768px){.fuelHero{flex-direction:row;align-items:flex-end;justify-content:space-between}.fuelHeroActions{width:100%;max-width:48rem;flex-direction:row;justify-content:flex-end}.fuelTopGrid{grid-template-columns:minmax(0,2.2fr) minmax(320px,1fr)}}
+.fuelLogModal{width:min(100%,calc(100vw - 1.5rem));max-width:64rem;max-height:calc(100vh - 2.5rem);overflow-y:auto;border:1px solid #dbe4ee;border-radius:1.25rem;background:#fff;box-shadow:0 28px 56px rgba(15,23,42,.24);scrollbar-width:thin;scrollbar-color:rgba(100,116,139,.45) transparent}
+.fuelLogModal::-webkit-scrollbar{width:8px;height:8px}
+.fuelLogModal::-webkit-scrollbar-track{background:transparent}
+.fuelLogModal::-webkit-scrollbar-thumb{border:2px solid transparent;border-radius:999px;background:rgba(100,116,139,.32);background-clip:padding-box}
+.fuelLogModal::-webkit-scrollbar-thumb:hover{background:rgba(100,116,139,.46);background-clip:padding-box}
+.fuelLogModalTitle{font-size:2rem;font-weight:700;color:#1e293b}
+.fuelLogBody{display:flex;flex-direction:column;gap:1rem;padding:1rem 1.2rem 1.15rem}
+.fuelLogGrid{display:grid;gap:.9rem}
+.fuelLogField{display:flex;flex-direction:column;gap:.45rem}
+.fuelLogLabel{font-size:.95rem;font-weight:400;color:#62748e}
+.fuelLogInput{min-height:3.3rem;border:1px solid #939393;border-radius:.65rem;background:#f1f5f9;padding:0 .95rem;font:inherit;color:#111827;outline:none;transition:border-color var(--app-motion-duration) var(--app-motion-ease),background-color var(--app-motion-duration) var(--app-motion-ease),box-shadow var(--app-motion-duration) var(--app-motion-ease)}
+.fuelLogInput:focus{border-color:#0f172a;background:#fff;box-shadow:0 0 0 3px rgba(15,23,42,.08)}
+.fuelLogInput[readonly]{color:#475569}
+.fuelLogTextarea{min-height:7rem;padding:.9rem .95rem;resize:vertical}
+.fuelUploadField{display:flex;min-height:3.3rem;align-items:center;gap:.85rem;border:1px solid #939393;border-radius:.65rem;background:#f1f5f9;padding:.55rem .8rem}
+.fuelHiddenInput{display:none}
+.fuelChooseFileButton{border:1px solid #111827;background:#fff;border-radius:.35rem;padding:.45rem .8rem;font:inherit;font-size:.95rem;font-weight:400;color:#111827}
+.fuelFileName{font-size:.95rem;font-weight:400;color:#111827}
+.fuelLogActions{display:flex;flex-direction:column-reverse;gap:.75rem;padding:1rem 1.25rem 1.15rem;border-top:1px solid #e2e8f0}
+.fuelLogResetButton,.fuelLogCloseButton,.fuelLogSubmitButton{min-height:3.3rem;border-radius:.65rem;padding:0 1.2rem;font-size:.95rem;font-weight:600;transition:background-color var(--app-motion-duration) var(--app-motion-ease),border-color var(--app-motion-duration) var(--app-motion-ease),color var(--app-motion-duration) var(--app-motion-ease),transform var(--app-motion-duration) var(--app-motion-ease)}
+.fuelLogResetButton{border:1px solid rgba(251,29,33,.9);background:rgba(255,56,60,.18);color:rgba(251,29,33,.9)}
+.fuelLogCloseButton{border:1px solid #939393;background:#fff;color:#111827}
+.fuelLogSubmitButton{border:1px solid #939393;background:#0f172a;color:#fff}
+.fuelLogResetButton:hover,.fuelLogCloseButton:hover,.fuelLogSubmitButton:hover{transform:translateY(-1px)}
+.fuelLogResetButton:hover{background:rgba(255,56,60,.24)}
+.fuelLogCloseButton:hover{background:#f8fafc}
+.fuelLogSubmitButton:hover{background:#1e293b}
+@media (min-width:768px){.fuelLogGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.fuelLogActions{flex-direction:row;justify-content:flex-end}}

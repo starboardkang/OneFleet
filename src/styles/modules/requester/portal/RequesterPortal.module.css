@@ -56,4 +56,19 @@
  .tripModal::-webkit-scrollbar{width:8px;height:8px}
  .tripModal::-webkit-scrollbar-track{background:transparent}
  .tripModal::-webkit-scrollbar-thumb{border:2px solid transparent;border-radius:999px;background:rgba(100,116,139,.32);background-clip:padding-box}
- .tripModal::-webkit-scrollbar-thumb:hover{background:rgba(100,116,139,.46);background-clip:padding-box}
+.tripModal::-webkit-scrollbar-thumb:hover{background:rgba(100,116,139,.46);background-clip:padding-box}
+.modalOverlay{background:rgba(15,23,42,.5);backdrop-filter:blur(8px);padding:1.25rem}
+.profileModal,.tripModal,.deleteModal,.statusGuideDialog{border:1px solid #dbe4ee;border-radius:1.25rem;box-shadow:0 28px 56px rgba(15,23,42,.24)}
+.profileModal,.tripModal,.deleteModal,.statusGuideDialog{max-height:calc(100vh - 2.5rem);overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(100,116,139,.45) transparent}
+.profileModal::-webkit-scrollbar,.tripModal::-webkit-scrollbar,.deleteModal::-webkit-scrollbar,.statusGuideDialog::-webkit-scrollbar{width:8px;height:8px}
+.profileModal::-webkit-scrollbar-track,.tripModal::-webkit-scrollbar-track,.deleteModal::-webkit-scrollbar-track,.statusGuideDialog::-webkit-scrollbar-track{background:transparent}
+.profileModal::-webkit-scrollbar-thumb,.tripModal::-webkit-scrollbar-thumb,.deleteModal::-webkit-scrollbar-thumb,.statusGuideDialog::-webkit-scrollbar-thumb{border:2px solid transparent;border-radius:999px;background:rgba(100,116,139,.32);background-clip:padding-box}
+.profileModal::-webkit-scrollbar-thumb:hover,.tripModal::-webkit-scrollbar-thumb:hover,.deleteModal::-webkit-scrollbar-thumb:hover,.statusGuideDialog::-webkit-scrollbar-thumb:hover{background:rgba(100,116,139,.46);background-clip:padding-box}
+.profileModalHeader,.tripModalHeader,.deleteModalHeader,.statusGuideDialogHeader{margin-bottom:1.25rem}
+.profileModalTitle,.tripModalTitle,.deleteModalTitle,.statusGuideDialogTitle{font-size:1.75rem;font-weight:700;color:#0f172a}
+.modalCloseButton{background:#fff;border-color:#dbe4ee}
+.modalCloseButton:hover{background:#f8fafc;border-color:#cbd5e1}
+.profileModalActions,.deleteModalActions,.tripRemarksRow{gap:.75rem}
+.statusGuideDialog{padding:1.5rem}
+.statusGuideDialogClose{border:1px solid #cbd5e1;border-radius:.75rem;background:#fff;padding:.7rem 1rem;font-size:.875rem;font-weight:600;color:#475569;transition:background-color var(--app-motion-duration) var(--app-motion-ease),border-color var(--app-motion-duration) var(--app-motion-ease),transform var(--app-motion-duration) var(--app-motion-ease)}
+.statusGuideDialogClose:hover{background:#f8fafc;border-color:#94a3b8;transform:translateY(-1px)}

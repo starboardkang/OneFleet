@@ -97,6 +97,7 @@ type StaffTransportContentProps = {
   onAcceptRequest: (request: StaffRequestItem) => void
   onRejectRequest: (request: StaffRequestItem) => void
   onOpenDispatchRequest: (request: StaffRequestItem) => void
+  onOpenApprovalRequest: (request: ApprovalDispatchItem) => void
   onOpenDispatchModal: (request?: StaffRequestItem | null) => void
 }
 
@@ -117,6 +118,7 @@ export default function StaffTransportContent({
   onAcceptRequest,
   onRejectRequest,
   onOpenDispatchRequest,
+  onOpenApprovalRequest,
   onOpenDispatchModal,
 }: StaffTransportContentProps) {
   const groupedPastRequests =
@@ -546,20 +548,26 @@ export default function StaffTransportContent({
             <div className={styles.dispatchTable}>
               <div className={styles.dispatchTableHeader}>
                 <span>DRN</span>
+                <span>Requestor</span>
                 <span>Driver</span>
                 <span>Vehicle Type</span>
-                <span>Plate No.</span>
-                <span>Status</span>
-                <span>Contact</span>
+                <span>Action</span>
               </div>
               {approvalRequests.map((request) => (
                 <div key={`${request.drn}-approval`} className={styles.dispatchTableRow}>
                   <span>{request.drn}</span>
+                  <span>{request.requester}</span>
                   <span>{request.assignedDriverName}</span>
                   <span>{request.vehicleType}</span>
-                  <span>{request.vehiclePlateNumber}</span>
-                  <span className={styles.approvalStatusChip}>{request.status}</span>
-                  <span>{request.assignedDriverContact}</span>
+                  <span className={styles.dispatchActionGroup}>
+                    <button
+                      type="button"
+                      className={styles.dispatchApproveButton}
+                      onClick={() => onOpenApprovalRequest(request)}
+                    >
+                      Open
+                    </button>
+                  </span>
                 </div>
               ))}
             </div>

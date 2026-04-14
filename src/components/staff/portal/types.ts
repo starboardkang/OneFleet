@@ -33,6 +33,8 @@ export type StaffRequestItem = {
   createdByStaffName?: string
   requester: string
   requesterPhone: string
+  assignedDriverName?: string
+  assignedDriverContact?: string
   passengerNames: string[]
   purpose: string
   street: string
@@ -62,6 +64,7 @@ export type VehicleOccupancyEntry = {
 
 export type ApprovalDispatchItem = {
   drn: string
+  sourceRequest: StaffRequestItem
   requester: string
   destination: string
   dateFrom: string

@@ -1,4 +1,5 @@
 import ModalCloseButton from '../../global/common/ModalCloseButton'
+import useBodyScrollLock from '../../../hooks/useBodyScrollLock'
 import styles from '../../../styles/modules/staff/portal/StaffPortal.module.css'
 import type {
   DispatchFormState,
@@ -32,6 +33,8 @@ export default function DispatchRequestModal({
   onReset,
   onSubmit,
 }: DispatchRequestModalProps) {
+  useBodyScrollLock()
+
   return (
     <div className={styles.dispatchModalOverlay} onClick={onClose}>
       <div className={styles.dispatchModal} onClick={(event) => event.stopPropagation()}>

@@ -4,8 +4,11 @@ import type { Profile } from '../../global/profile/types'
 import RequestFormCreate from '../../global/transport/RequestFormCreate'
 import RemarksHistoryModal from '../../global/transport/RemarksHistoryModal'
 import TripDetailsModal from '../../global/transport/TripDetailsModal'
+import FuelManagementContent from '../fuel/FuelManagementContent'
 import type { RequestFormValues } from '../../global/transport/types'
 import DispatchRequestModal from '../transport/DispatchRequestModal'
+import ApprovalDecisionModal from '../transport/ApprovalDecisionModal'
+import ApprovalRequestModal from '../transport/ApprovalRequestModal'
 import DispatchQueueRequestModal from '../transport/DispatchQueueRequestModal'
 import RequestReviewModal from '../transport/RequestReviewModal'
 import StaffTransportContent from '../transport/StaffTransportContent'
@@ -60,6 +63,10 @@ export default function StaffPortalScreen({
   const [reviewMode, setReviewMode] = useState<'accept' | 'reject'>('accept')
   const [reviewRemarks, setReviewRemarks] = useState('')
   const [approvalRequests, setApprovalRequests] = useState<ApprovalDispatchItem[]>([])
+  const [selectedApprovalRequest, setSelectedApprovalRequest] = useState<ApprovalDispatchItem | null>(null)
+  const [isApprovalDecisionOpen, setIsApprovalDecisionOpen] = useState(false)
+  const [approvalDecisionMode, setApprovalDecisionMode] = useState<'approve' | 'reject'>('approve')
+  const [approvalDecisionRemarks, setApprovalDecisionRemarks] = useState('')
   const [dispatchSourceRequest, setDispatchSourceRequest] = useState<StaffRequestItem | null>(null)
   const [dispatchQueueRequest, setDispatchQueueRequest] = useState<StaffRequestItem | null>(null)
   const [isDispatchModalOpen, setIsDispatchModalOpen] = useState(false)
@@ -197,6 +204,12 @@ export default function StaffPortalScreen({
     setDispatchQueueRequest(request)
   }
 
+  const openApprovalRequest = (request: ApprovalDispatchItem) => {
+    setSelectedApprovalRequest(request)
+    setIsApprovalDecisionOpen(false)
+    setApprovalDecisionRemarks('')
+  }
+
   const handleToggleMenu = () => {
     setIsMenuOpen((current) => {
       const next = !current
@@ -292,9 +305,15 @@ export default function StaffPortalScreen({
     const sourceRequest =
       dispatchSourceRequest ?? requests.find((request) => request.id === dispatchForm.drn) ?? null
 
+    if (!sourceRequest) {
+      setDispatchValidationMessage('Select a valid request before sending it for approval.')
+      return
+    }
+
     setApprovalRequests((current) => [
       {
         drn: dispatchForm.drn.trim(),
+        sourceRequest,
         requester: sourceRequest?.requester ?? profile.fullName,
         destination: sourceRequest?.destination ?? '',
         dateFrom: sourceRequest?.dateFrom ?? '',
@@ -319,6 +338,60 @@ export default function StaffPortalScreen({
     setIsDispatchModalOpen(false)
     setDispatchSourceRequest(null)
     setDispatchQueueRequest(null)
+  }
+
+  const handleOpenApprovalDecision = (mode: 'approve' | 'reject') => {
+    setApprovalDecisionMode(mode)
+    setApprovalDecisionRemarks('')
+    setIsApprovalDecisionOpen(true)
+  }
+
+  const handleConfirmApprovalDecision = () => {
+    if (!selectedApprovalRequest) {
+      return
+    }
+
+    const nowIso = new Date().toISOString()
+    const nextStatus = approvalDecisionMode === 'approve' ? 'Approved' : 'Denied'
+    const nextMessage =
+      approvalDecisionMode === 'approve'
+        ? approvalDecisionRemarks.trim() || 'RVDSS assignment approved and finalized.'
+        : approvalDecisionRemarks.trim()
+
+    const nextRemark = createRemarkEntry(
+      selectedApprovalRequest.sourceRequest.id,
+      selectedApprovalRequest.sourceRequest.remarksHistory.length + 1,
+      profile.fullName,
+      nextMessage,
+      nowIso,
+    )
+
+    const nextRequest: StaffRequestItem = {
+      ...selectedApprovalRequest.sourceRequest,
+      requester: selectedApprovalRequest.requester,
+      destination: selectedApprovalRequest.destination,
+      dateFrom: selectedApprovalRequest.dateFrom,
+      dateTo: selectedApprovalRequest.dateTo,
+      requesterPhone: selectedApprovalRequest.sourceRequest.requesterPhone,
+      assignedDriverName: selectedApprovalRequest.assignedDriverName,
+      assignedDriverContact: selectedApprovalRequest.assignedDriverContact,
+      vehicle: `${selectedApprovalRequest.vehiclePlateNumber} - ${selectedApprovalRequest.vehicleType}`,
+      plateNumber: selectedApprovalRequest.vehiclePlateNumber,
+      status: nextStatus,
+      dispatchQueued: false,
+      remarks: nextMessage,
+      remarksHistory: [...selectedApprovalRequest.sourceRequest.remarksHistory, nextRemark],
+      view: 'active',
+    }
+
+    setRequests((current) => [nextRequest, ...current])
+    setApprovalRequests((current) =>
+      current.filter((request) => request.drn !== selectedApprovalRequest.drn),
+    )
+    setSelectedApprovalRequest(null)
+    setIsApprovalDecisionOpen(false)
+    setApprovalDecisionRemarks('')
+    setActiveTransportTab('all')
   }
 
   return (
@@ -366,8 +439,11 @@ export default function StaffPortalScreen({
           onAcceptRequest={(request) => handleOpenReview(request, 'accept')}
           onRejectRequest={(request) => handleOpenReview(request, 'reject')}
           onOpenDispatchRequest={openDispatchQueueRequest}
+          onOpenApprovalRequest={openApprovalRequest}
           onOpenDispatchModal={openDispatchModal}
             />
+          ) : activeItem === 'Fuel Management' ? (
+            <FuelManagementContent />
           ) : (
             <>
               <div className={styles.pageTitleRow}>
@@ -508,6 +584,29 @@ export default function StaffPortalScreen({
           }}
           onReset={() => resetDispatchForm(dispatchSourceRequest)}
           onSubmit={handleSubmitDispatch}
+        />
+      ) : null}
+
+      {selectedApprovalRequest && !isApprovalDecisionOpen ? (
+        <ApprovalRequestModal
+          request={selectedApprovalRequest}
+          onClose={() => setSelectedApprovalRequest(null)}
+          onReject={() => handleOpenApprovalDecision('reject')}
+          onApprove={() => handleOpenApprovalDecision('approve')}
+        />
+      ) : null}
+
+      {selectedApprovalRequest && isApprovalDecisionOpen ? (
+        <ApprovalDecisionModal
+          mode={approvalDecisionMode}
+          requestId={selectedApprovalRequest.drn}
+          remarks={approvalDecisionRemarks}
+          onChangeRemarks={setApprovalDecisionRemarks}
+          onClose={() => {
+            setIsApprovalDecisionOpen(false)
+            setApprovalDecisionRemarks('')
+          }}
+          onConfirm={handleConfirmApprovalDecision}
         />
       ) : null}
     </div>

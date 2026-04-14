@@ -108,7 +108,7 @@ export function mapStaffRequestToTripDetails(request: StaffRequestItem): Request
     dateFrom: request.dateFrom,
     dateTo: request.dateTo,
     timeNeeded: request.timeNeeded,
-    driver: request.requester,
+    driver: request.assignedDriverName ?? request.requester,
     vehicle: request.vehicle,
     plateNumber: request.plateNumber,
     destination: request.destination,
