@@ -52,3 +52,8 @@
 .pastTableStatus{display:inline-flex;white-space:nowrap}
 .pastTableActions{display:flex;flex-wrap:wrap;gap:.5rem;min-width:320px}
 @media (min-width:1280px){.overviewSummaryRow{align-items:stretch}.requestTabs{flex:0 0 18rem}.requestTabsPanel{min-height:100%}}
+ .tripModal{scrollbar-width:thin;scrollbar-color:rgba(100,116,139,.45) transparent}
+ .tripModal::-webkit-scrollbar{width:8px;height:8px}
+ .tripModal::-webkit-scrollbar-track{background:transparent}
+ .tripModal::-webkit-scrollbar-thumb{border:2px solid transparent;border-radius:999px;background:rgba(100,116,139,.32);background-clip:padding-box}
+ .tripModal::-webkit-scrollbar-thumb:hover{background:rgba(100,116,139,.46);background-clip:padding-box}
